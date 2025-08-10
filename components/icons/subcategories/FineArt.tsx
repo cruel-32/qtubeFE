@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SubCategoryIconProps } from './types';
-import SvgIcon from '@/assets/icons/subcategories/34.svg';
+import SvgIcon from '@/assets/icons/subcategories/33.svg';
 
-const Music: React.FC<SubCategoryIconProps> = ({ width = 80, height = 80 }) => {
+const FineArt: React.FC<SubCategoryIconProps> = ({ width = 80, height = 80 }) => {
   return (
     <View style={[styles.container, { width, height }]}>
       <SvgIcon width={width} height={height} />
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Music;
+export default FineArt;

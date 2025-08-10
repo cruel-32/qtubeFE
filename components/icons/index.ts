@@ -4,10 +4,13 @@ export { default as BeakerIcon } from '@/components/icons/BeakerIcon';
 
 // Main Category Icons
 export { default as AnimeIcon } from '@/components/icons/categories/AnimeIcon';
+export { default as ArtIcon } from '@/components/icons/categories/ArtIcon';
 export { default as EconomyIcon } from '@/components/icons/categories/EconomyIcon';
 export { default as EntertainmentIcon } from '@/components/icons/categories/EntertainmentIcon';
 export { default as GameIcon } from '@/components/icons/categories/GameIcon';
 export { default as HistoryIcon } from '@/components/icons/categories/HistoryIcon';
+export { default as HumanitiesIcon } from '@/components/icons/categories/HumanitiesIcon';
+export { default as ITIcon } from '@/components/icons/categories/ITIcon';
 export { default as LanguageIcon } from '@/components/icons/categories/LanguageIcon';
 export { default as MovieIcon } from '@/components/icons/categories/MovieIcon';
 export { default as ScienceIcon } from '@/components/icons/categories/ScienceIcon';
@@ -15,6 +18,9 @@ export { default as SocietyIcon } from '@/components/icons/categories/SocietyIco
 export { default as SportsIcon } from '@/components/icons/categories/SportsIcon';
 
 // Subcategory Icons
+export * from '@/components/icons/subcategories';
+
+// Other Icons
 export { default as ChallengeIcon } from '@/components/icons/ChallengeIcon';
 export { default as CloseIcon } from '@/components/icons/CloseIcon';
 export { default as CopyIcon } from '@/components/icons/CopyIcon';
@@ -45,9 +51,9 @@ export { default as ShareIcon } from '@/components/icons/ShareIcon';
 export { default as Sport1Icon } from '@/components/icons/Sport1Icon';
 export { default as StarIcon } from '@/components/icons/StarIcon';
 export { default as StarOffIcon } from '@/components/icons/StarOffIcon';
-export * from '@/components/icons/subcategories';
 export { default as TimeIcon } from '@/components/icons/TimeIcon';
 export { default as TwitterIcon } from '@/components/icons/TwitterIcon';
 export { default as Wrong2Icon } from '@/components/icons/Wrong2Icon';
 export { default as WrongIcon } from '@/components/icons/WrongIcon';
+
 

@@ -1,8 +1,11 @@
 export { default as AnimeIcon } from './AnimeIcon';
+export { default as ArtIcon } from './ArtIcon';
 export { default as EconomyIcon } from './EconomyIcon';
 export { default as EntertainmentIcon } from './EntertainmentIcon';
 export { default as GameIcon } from './GameIcon';
 export { default as HistoryIcon } from './HistoryIcon';
+export { default as HumanitiesIcon } from './HumanitiesIcon';
+export { default as ITIcon } from './ITIcon';
 export { default as LanguageIcon } from './LanguageIcon';
 export { default as MovieIcon } from './MovieIcon';
 export { default as ScienceIcon } from './ScienceIcon';
