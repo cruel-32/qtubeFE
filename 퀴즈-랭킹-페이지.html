@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>퀴즈 랭킹</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#5B5FFF',secondary:'#FF8A65'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before {
+content: "\f3c2";
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- 상단 네비게이션 -->
+<nav class="fixed top-0 w-full bg-white shadow-sm z-50 px-4 py-3">
+<div class="flex items-center justify-between">
+<div class="font-['Pacifico'] text-primary text-xl">logo</div>
+<h1 class="text-lg font-semibold text-gray-900">퀴즈 랭킹</h1>
+<div class="w-6"></div>
+</div>
+</nav>
+<!-- 메인 컨텐츠 -->
+<main class="pt-16 pb-20 px-4">
+<!-- 기간 선택 -->
+<div class="bg-white rounded-xl p-1 mb-2 shadow-sm">
+<div class="flex">
+<button class="flex-1 py-2 px-4 text-sm font-medium text-gray-600 rounded-lg transition-colors cursor-pointer" data-period="daily">일간</button>
+<button class="flex-1 py-2 px-4 text-sm font-medium bg-primary text-white rounded-lg transition-colors cursor-pointer" data-period="weekly">주간</button>
+<button class="flex-1 py-2 px-4 text-sm font-medium text-gray-600 rounded-lg transition-colors cursor-pointer" data-period="monthly">월간</button>
+</div>
+</div>
+<div class="flex items-center justify-between mb-6">
+<button id="prevPeriod" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-arrow-left-s-line text-xl"></i>
+</button>
+<div id="periodDisplay" class="text-sm text-gray-600">2025.07.15 - 07.21</div>
+<button id="nextPeriod" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-arrow-right-s-line text-xl"></i>
+</button>
+</div>
+<div class="text-xs text-gray-500 text-center mb-6">
+매일 오전 2시 순위 업데이트
+</div>
+<!-- TOP 3 섹션 -->
+<div class="bg-gradient-to-br from-purple-50 to-orange-50 rounded-2xl p-6 mb-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-semibold text-gray-900">이번 주 TOP 3</h2>
+<span class="text-sm text-gray-500">2025.07.15 - 07.21</span>
+</div>
+<div class="flex items-end justify-center space-x-4">
+<!-- 2등 -->
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full border-4 border-secondary overflow-hidden mb-2">
+<img src="https://readdy.ai/api/search-image?query=Professional%20male%20character%20with%20glasses%2C%20business%20casual%20attire%2C%20friendly%20smile%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=64&height=64&seq=rank2&orientation=squarish" alt="김민수" class="w-full h-full object-cover">
+</div>
+<div class="bg-secondary rounded-t-2xl px-6 py-4 text-center text-white">
+<div class="text-2xl font-bold mb-1">2</div>
+<div class="text-sm font-medium">김민수</div>
+<div class="text-xs opacity-90">980점</div>
+</div>
+</div>
+<!-- 1등 -->
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full border-4 border-primary overflow-hidden mb-2">
+<img src="https://readdy.ai/api/search-image?query=Professional%20female%20character%20with%20long%20brown%20hair%2C%20business%20attire%2C%20confident%20smile%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=80&height=80&seq=rank1&orientation=squarish" alt="박지연" class="w-full h-full object-cover">
+</div>
+<div class="bg-primary rounded-t-2xl px-6 py-6 text-center text-white">
+<div class="text-3xl font-bold mb-1">1</div>
+<div class="text-sm font-medium">박지연</div>
+<div class="text-xs opacity-90">1,250점</div>
+</div>
+</div>
+<!-- 3등 -->
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full border-4 border-secondary overflow-hidden mb-2">
+<img src="https://readdy.ai/api/search-image?query=Young%20male%20character%20with%20casual%20style%2C%20friendly%20appearance%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=64&height=64&seq=rank3&orientation=squarish" alt="이준호" class="w-full h-full object-cover">
+</div>
+<div class="bg-secondary rounded-t-2xl px-6 py-4 text-center text-white">
+<div class="text-2xl font-bold mb-1">3</div>
+<div class="text-sm font-medium">이준호</div>
+<div class="text-xs opacity-90">820점</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 전체 랭킹 -->
+<div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<h2 class="text-lg font-semibold text-gray-900">전체 랭킹</h2>
+<span class="text-sm text-gray-500">총 98명</span>
+</div>
+<div class="divide-y divide-gray-100" id="rankingList">
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<span class="text-lg font-bold text-primary">1</span>
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Professional%20female%20character%20with%20long%20brown%20hair%2C%20business%20attire%2C%20confident%20smile%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=48&height=48&seq=list1&orientation=squarish" alt="박지연" class="w-full h-full object-cover">
+</div>
+<div>
+<div class="font-medium text-gray-900">박지연</div>
+<div class="text-sm text-gray-500">퀴즈 마스터</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-lg font-bold text-primary">1,250점</div>
+<div class="text-sm text-gray-500">정답률 92%</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<span class="text-lg font-bold text-secondary">2</span>
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Professional%20male%20character%20with%20glasses%2C%20business%20casual%20attire%2C%20friendly%20smile%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=48&height=48&seq=list2&orientation=squarish" alt="김민수" class="w-full h-full object-cover">
+</div>
+<div>
+<div class="font-medium text-gray-900">김민수</div>
+<div class="text-sm text-gray-500">역사 전문가</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-lg font-bold text-secondary">980점</div>
+<div class="text-sm text-gray-500">정답률 88%</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<span class="text-lg font-bold text-secondary">3</span>
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Young%20male%20character%20with%20casual%20style%2C%20friendly%20appearance%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=48&height=48&seq=list3&orientation=squarish" alt="이준호" class="w-full h-full object-cover">
+</div>
+<div>
+<div class="font-medium text-gray-900">이준호</div>
+<div class="text-sm text-gray-500">영화 마니아</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-lg font-bold text-secondary">820점</div>
+<div class="text-sm text-gray-500">정답률 85%</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<span class="text-lg font-medium text-gray-600">4</span>
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Female%20character%20with%20short%20hair%2C%20professional%20attire%2C%20warm%20smile%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=48&height=48&seq=list4&orientation=squarish" alt="최수진" class="w-full h-full object-cover">
+</div>
+<div>
+<div class="font-medium text-gray-900">최수진</div>
+<div class="text-sm text-gray-500">과학 연구원</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-lg font-medium text-gray-900">750점</div>
+<div class="text-sm text-gray-500">정답률 82%</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<span class="text-lg font-medium text-gray-600">5</span>
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Male%20character%20with%20modern%20hairstyle%2C%20casual%20business%20attire%2C%20friendly%20expression%2C%20clean%20portrait%20style%2C%20isolated%20on%20white%20background%2C%20centered%20composition&width=48&height=48&seq=list5&orientation=squarish" alt="정태현" class="w-full h-full object-cover">
+</div>
+<div>
+<div class="font-medium text-gray-900">정태현</div>
+<div class="text-sm text-gray-500">경제 분석가</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-lg font-medium text-gray-900">720점</div>
+<div class="text-sm text-gray-500">정답률 79%</div>
+</div>
+</div>
+</div>
+<button id="loadMoreBtn" class="w-full py-4 text-primary font-medium border-t border-gray-100">
+더보기 (5/100)
+</button>
+</div>
+<!-- 나의 상세기록 버튼 -->
+<button class="w-full bg-primary text-white py-4 rounded-xl font-medium text-lg shadow-sm !rounded-button cursor-pointer" id="myRecordBtn">
+나의 상세기록 보기
+</button>
+</main>
+<!-- 하단 네비게이션 -->
+<nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 z-50">
+<div class="grid grid-cols-3 h-16">
+<button class="flex flex-col items-center justify-center space-y-1 cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-home-line text-gray-400"></i>
+</div>
+<span class="text-xs text-gray-400">홈</span>
+</button>
+<button class="flex flex-col items-center justify-center space-y-1 cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-trophy-fill text-primary"></i>
+</div>
+<span class="text-xs text-primary font-medium">랭킹</span>
+</button>
+<button class="flex flex-col items-center justify-center space-y-1 cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<span class="text-xs text-gray-400">마이페이지</span>
+</button>
+</div>
+</nav>
+<!-- 상세기록 모달 -->
+<div id="recordModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+<div class="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl max-h-[90vh] overflow-y-auto">
+<div class="sticky top-0 bg-white px-6 py-4 border-b border-gray-100">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-semibold text-gray-900">나의 상세기록</h2>
+<button id="closeModal" class="w-8 h-8 flex items-center justify-center cursor-pointer">
+<i class="ri-close-line text-gray-400 text-xl"></i>
+</button>
+</div>
+</div>
+<div class="p-6">
+<!-- 전체 통계 -->
+<div class="bg-gradient-to-r from-primary to-purple-600 rounded-2xl p-6 text-white mb-6">
+<div class="text-center">
+<div class="text-3xl font-bold mb-2">2,850점</div>
+<div class="text-sm opacity-90 mb-4">누적 총점</div>
+<div class="flex justify-center space-x-8">
+<div class="text-center">
+<div class="text-lg font-semibold">87%</div>
+<div class="text-xs opacity-80">전체 정답률</div>
+</div>
+<div class="text-center">
+<div class="text-lg font-semibold">342</div>
+<div class="text-xs opacity-80">총 문제 수</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 카테고리별 차트 -->
+<div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+<h3 class="text-lg font-semibold text-gray-900 mb-4">카테고리별 성과</h3>
+<div id="categoryChart" style="height: 300px;"></div>
+</div>
+<!-- 정답률 추이 -->
+<div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+<h3 class="text-lg font-semibold text-gray-900 mb-4">정답률 추이</h3>
+<div id="accuracyChart" style="height: 250px;"></div>
+</div>
+<!-- 카테고리별 상세 데이터 -->
+<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-gray-100">
+<h3 class="text-lg font-semibold text-gray-900">카테고리별 상세</h3>
+</div>
+<div class="divide-y divide-gray-100">
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+<i class="ri-flask-line text-blue-600"></i>
+</div>
+<span class="font-medium text-gray-900">과학</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">92% · 45문제 · 380점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+<i class="ri-ancient-gate-line text-amber-600"></i>
+</div>
+<span class="font-medium text-gray-900">역사</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">89% · 38문제 · 320점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+<i class="ri-government-line text-green-600"></i>
+</div>
+<span class="font-medium text-gray-900">사회</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">85% · 42문제 · 350점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+<i class="ri-line-chart-line text-purple-600"></i>
+</div>
+<span class="font-medium text-gray-900">경제</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">83% · 35문제 · 290점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+<i class="ri-star-line text-pink-600"></i>
+</div>
+<span class="font-medium text-gray-900">연예</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">91% · 28문제 · 250점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+<i class="ri-gamepad-line text-indigo-600"></i>
+</div>
+<span class="font-medium text-gray-900">게임</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">88% · 32문제 · 280점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+<i class="ri-movie-line text-red-600"></i>
+</div>
+<span class="font-medium text-gray-900">영화</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">94% · 40문제 · 370점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center">
+<i class="ri-tv-line text-cyan-600"></i>
+</div>
+<span class="font-medium text-gray-900">애니</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">86% · 25문제 · 210점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+<i class="ri-football-line text-orange-600"></i>
+</div>
+<span class="font-medium text-gray-900">스포츠</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">80% · 30문제 · 240점</div>
+</div>
+</div>
+<div class="px-6 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+<i class="ri-translate-line text-teal-600"></i>
+</div>
+<span class="font-medium text-gray-900">영어</span>
+</div>
+<div class="text-right">
+<div class="text-sm font-medium text-gray-900">87% · 27문제 · 260점</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script id="periodToggle">
+document.addEventListener('DOMContentLoaded', function() {
+const periodButtons = document.querySelectorAll('[data-period]');
+const prevPeriodBtn = document.getElementById('prevPeriod');
+const nextPeriodBtn = document.getElementById('nextPeriod');
+const periodDisplay = document.getElementById('periodDisplay');
+
+let currentPeriod = 'weekly';
+let currentDate = new Date('2025-07-21');
+
+function updatePeriodDisplay() {
+let displayText = '';
+if (currentPeriod === 'daily') {
+displayText = currentDate.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+} else if (currentPeriod === 'weekly') {
+const weekStart = new Date(currentDate);
+weekStart.setDate(currentDate.getDate() - 6);
+displayText = `${weekStart.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })} - ${currentDate.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })}`;
+} else {
+displayText = currentDate.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' });
+}
+periodDisplay.textContent = displayText;
+}
+
+periodButtons.forEach(button => {
+button.addEventListener('click', function() {
+periodButtons.forEach(btn => {
+btn.classList.remove('bg-primary', 'text-white');
+btn.classList.add('text-gray-600');
+});
+this.classList.remove('text-gray-600');
+this.classList.add('bg-primary', 'text-white');
+currentPeriod = this.dataset.period;
+updatePeriodDisplay();
+});
+});
+
+prevPeriodBtn.addEventListener('click', function() {
+if (currentPeriod === 'daily') {
+currentDate.setDate(currentDate.getDate() - 1);
+} else if (currentPeriod === 'weekly') {
+currentDate.setDate(currentDate.getDate() - 7);
+} else {
+currentDate.setMonth(currentDate.getMonth() - 1);
+}
+updatePeriodDisplay();
+});
+
+nextPeriodBtn.addEventListener('click', function() {
+const today = new Date('2025-07-21');
+let newDate = new Date(currentDate);
+if (currentPeriod === 'daily') {
+newDate.setDate(newDate.getDate() + 1);
+} else if (currentPeriod === 'weekly') {
+newDate.setDate(newDate.getDate() + 7);
+} else {
+newDate.setMonth(newDate.getMonth() + 1);
+}
+if (newDate <= today) {
+currentDate = newDate;
+updatePeriodDisplay();
+}
+});
+
+updatePeriodDisplay();
+});
+</script>
+
+<script id="rankingList">
+document.addEventListener('DOMContentLoaded', function() {
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+const rankingList = document.getElementById('rankingList');
+let currentPage = 1;
+const itemsPerPage = 5;
+const myRank = 8;
+
+function createRankItem(rank, name, title, score, accuracy, isMe = false) {
+const div = document.createElement('div');
+div.className = `px-6 py-4 flex items-center justify-between ${isMe ? 'bg-primary bg-opacity-5' : ''}`;
+div.innerHTML = `
+<div class="flex items-center space-x-4">
+<span class="text-lg ${rank <= 3 ? 'font-bold' : 'font-medium'} ${rank === 1 ? 'text-primary' : rank <= 3 ? 'text-secondary' : 'text-gray-600'}">${rank}</span>
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Professional ${rank % 2 === 0 ? 'female' : 'male'} character, portrait style, isolated on white background&width=48&height=48&seq=list${rank}&orientation=squarish" alt="${name}" class="w-full h-full object-cover">
+</div>
+<div>
+<div class="font-medium ${isMe ? 'text-primary' : 'text-gray-900'}">${name}</div>
+<div class="text-sm ${isMe ? 'text-primary opacity-80' : 'text-gray-500'}">${title}</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-lg ${rank <= 3 ? 'font-bold' : 'font-medium'} ${isMe ? 'text-primary' : rank === 1 ? 'text-primary' : rank <= 3 ? 'text-secondary' : 'text-gray-900'}">${score}점</div>
+<div class="text-sm ${isMe ? 'text-primary opacity-80' : 'text-gray-500'}">정답률 ${accuracy}%</div>
+</div>
+`;
+return div;
+}
+
+loadMoreBtn.addEventListener('click', function() {
+currentPage++;
+const start = (currentPage - 1) * itemsPerPage + 1;
+const end = Math.min(currentPage * itemsPerPage, 100);
+
+for (let i = start; i <= end; i++) {
+const isMe = i === myRank;
+rankingList.appendChild(createRankItem(
+i,
+isMe ? '나' : `사용자${i}`,
+['퀴즈 마스터', '역사 전문가', '과학 연구원', '영화 마니아', '게임 전문가'][Math.floor(Math.random() * 5)],
+Math.floor(1200 - i * 5),
+Math.floor(95 - i * 0.2),
+isMe
+));
+}
+
+loadMoreBtn.textContent = `더보기 (${Math.min(end, 100)}/100)`;
+if (end >= 100) {
+loadMoreBtn.style.display = 'none';
+}
+});
+
+loadMoreBtn.click();
+});
+</script>
+<script id="modalControl">
+document.addEventListener('DOMContentLoaded', function() {
+const myRecordBtn = document.getElementById('myRecordBtn');
+const recordModal = document.getElementById('recordModal');
+const closeModal = document.getElementById('closeModal');
+myRecordBtn.addEventListener('click', function() {
+recordModal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+setTimeout(() => {
+initCharts();
+}, 100);
+});
+closeModal.addEventListener('click', function() {
+recordModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+recordModal.addEventListener('click', function(e) {
+if (e.target === recordModal) {
+recordModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+});
+});
+</script>
+<script id="chartInit">
+function initCharts() {
+const categoryChart = echarts.init(document.getElementById('categoryChart'));
+const accuracyChart = echarts.init(document.getElementById('accuracyChart'));
+const categoryOption = {
+tooltip: {
+trigger: 'axis',
+axisPointer: {
+type: 'shadow'
+}
+},
+grid: {
+left: '3%',
+right: '4%',
+bottom: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'category',
+data: ['과학', '역사', '사회', '경제', '연예', '게임', '영화', '애니', '스포츠', '영어'],
+axisLabel: {
+rotate: 45,
+fontSize: 10
+}
+},
+yAxis: [
+{
+type: 'value',
+name: '문제 수',
+position: 'left'
+},
+{
+type: 'value',
+name: '정답률(%)',
+position: 'right',
+max: 100
+}
+],
+series: [
+{
+name: '문제 수',
+type: 'bar',
+data: [45, 38, 42, 35, 28, 32, 40, 25, 30, 27],
+itemStyle: {
+color: '#5B5FFF'
+}
+},
+{
+name: '정답률',
+type: 'line',
+yAxisIndex: 1,
+data: [92, 89, 85, 83, 91, 88, 94, 86, 80, 87],
+itemStyle: {
+color: '#FF8A65'
+},
+lineStyle: {
+color: '#FF8A65'
+}
+}
+]
+};
+const accuracyOption = {
+tooltip: {
+trigger: 'axis'
+},
+grid: {
+left: '3%',
+right: '4%',
+bottom: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'category',
+data: ['1주차', '2주차', '3주차', '4주차', '5주차', '6주차', '7주차', '8주차']
+},
+yAxis: {
+type: 'value',
+max: 100,
+name: '정답률(%)'
+},
+series: [
+{
+name: '정답률',
+type: 'line',
+data: [78, 82, 85, 87, 89, 88, 90, 87],
+smooth: true,
+itemStyle: {
+color: '#5B5FFF'
+},
+lineStyle: {
+color: '#5B5FFF'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0, color: 'rgba(91, 95, 255, 0.3)'
+}, {
+offset: 1, color: 'rgba(91, 95, 255, 0.05)'
+}]
+}
+}
+}
+]
+};
+categoryChart.setOption(categoryOption);
+accuracyChart.setOption(accuracyOption);
+window.addEventListener('resize', function() {
+categoryChart.resize();
+accuracyChart.resize();
+});
+}
+</script>
+</body>
+</html>
