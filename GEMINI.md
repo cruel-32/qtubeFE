@@ -6,7 +6,7 @@
 ## 프로젝트 정보
 이 프로젝트는 React Native를 사용한 퀴즈 앱 "qtube"입니다.
 
-- 메인 프로젝트: `/qtube/qtubeapps/` (React Native/Expo/TypeScript)
+- 메인 프로젝트: `/qtube/FE/` (React Native/Expo/TypeScript)
 - api 서버 : `/qtube/BE/` (nodejs/fastify/postgres/redis)
 
 ## 기술 스택
