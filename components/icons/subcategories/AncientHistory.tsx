@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import AncientHistorySvg from '@/assets/icons/subcategories/20.svg';
+import AncientHistorySvg from '@/assets/icons/subcategories/23.svg';
 
 const AncientHistory: React.FC<CategoryIconProps> = ({ 
   width = 80,

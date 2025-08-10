@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import JapaneseAnimeSvg from '@/assets/icons/subcategories/55.svg';
+import JapaneseAnimeSvg from '@/assets/icons/subcategories/53.svg';
 
 const JapaneseAnime: React.FC<CategoryIconProps> = ({ 
   width = 80,

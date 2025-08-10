@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import BusinessManagementSvg from '@/assets/icons/subcategories/33.svg';
+import BusinessManagementSvg from '@/assets/icons/subcategories/37.svg';
 
 const BusinessManagement: React.FC<CategoryIconProps> = ({ 
   width = 80,

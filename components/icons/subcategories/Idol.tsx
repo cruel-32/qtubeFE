@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import IdolSvg from '@/assets/icons/subcategories/38.svg';
+import IdolSvg from '@/assets/icons/subcategories/41.svg';
 
 const Idol: React.FC<CategoryIconProps> = ({ 
   width = 80,

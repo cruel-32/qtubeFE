@@ -52,6 +52,7 @@ export { default as Esports } from './Esports';
 // Movie
 export { default as KoreanMovie } from './KoreanMovie';
 export { default as Hollywood } from './Hollywood';
+export { default as AsianMovie } from './AsianMovie';
 export { default as InternationalMovie } from './InternationalMovie';
 
 // Anime

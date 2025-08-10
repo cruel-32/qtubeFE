@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import ChineseSvg from '@/assets/icons/subcategories/70.svg';
+import ChineseSvg from '@/assets/icons/subcategories/63.svg';
 
 const Chinese: React.FC<CategoryIconProps> = ({ 
   width = 80,

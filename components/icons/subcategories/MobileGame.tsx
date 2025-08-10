@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import MobileGameSvg from '@/assets/icons/subcategories/44.svg';
+import MobileGameSvg from '@/assets/icons/subcategories/46.svg';
 
 const MobileGame: React.FC<CategoryIconProps> = ({ 
   width = 80,

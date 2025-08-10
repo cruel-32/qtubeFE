@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import ActorSvg from '@/assets/icons/subcategories/39.svg';
+import ActorSvg from '@/assets/icons/subcategories/42.svg';
 
 const Actor: React.FC<CategoryIconProps> = ({ 
   width = 80,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import PoliticsSvg from '@/assets/icons/subcategories/24.svg';
+import PoliticsSvg from '@/assets/icons/subcategories/25.svg';
 
 const Politics: React.FC<CategoryIconProps> = ({ 
   width = 80,

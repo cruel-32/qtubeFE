@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import VarietySvg from '@/assets/icons/subcategories/40.svg';
+import VarietySvg from '@/assets/icons/subcategories/43.svg';
 
 const Variety: React.FC<CategoryIconProps> = ({ 
   width = 80,

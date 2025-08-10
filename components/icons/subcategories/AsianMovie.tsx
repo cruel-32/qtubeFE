@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import LawSvg from '@/assets/icons/subcategories/26.svg';
+import AsianMovie from '@/assets/icons/subcategories/51.svg';
 
-const Law: React.FC<CategoryIconProps> = ({ 
+const Hollywood: React.FC<CategoryIconProps> = ({ 
   width = 80,
   height = 80,
 }) => {
   return (
     <View style={[styles.container, { width, height }]}>
-      <LawSvg 
+      <AsianMovie 
         width={width}
         height={height}
       />
@@ -25,4 +25,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Law;
+export default Hollywood;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import EarthScienceSvg from '@/assets/icons/subcategories/14.svg';
+import EarthScienceSvg from '@/assets/icons/subcategories/17.svg';
 
 const EarthScience: React.FC<CategoryIconProps> = ({ 
   width = 80,

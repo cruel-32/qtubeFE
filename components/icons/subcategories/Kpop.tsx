@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from '../categories/types';
-import KpopSvg from '@/assets/icons/subcategories/37.svg';
+import KpopSvg from '@/assets/icons/subcategories/40.svg';
 
 const Kpop: React.FC<CategoryIconProps> = ({ 
   width = 80,
