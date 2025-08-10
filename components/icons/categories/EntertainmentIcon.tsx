@@ -1,7 +1,7 @@
-import EntertainmentSvg from '@/assets/icons/category/5.svg';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { CategoryIconProps } from './types';
+import EntertainmentSvg from '@/assets/icons/category/7.svg';
 
 const EntertainmentIcon: React.FC<CategoryIconProps> = ({ 
   width = 80,

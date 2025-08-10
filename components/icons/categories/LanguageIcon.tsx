@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from './types';
-import LanguageSvg from '@/assets/icons/category/10.svg';
+import LanguageSvg from '@/assets/icons/category/12.svg';
 
 const LanguageIcon: React.FC<CategoryIconProps> = ({ 
   width = 80,

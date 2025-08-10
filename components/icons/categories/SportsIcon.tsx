@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from './types';
-import SportsSvg from '@/assets/icons/category/9.svg';
+import SportsSvg from '@/assets/icons/category/11.svg';
 
 const SportsIcon: React.FC<CategoryIconProps> = ({ 
   width = 80,

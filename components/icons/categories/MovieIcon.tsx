@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from './types';
-import MovieSvg from '@/assets/icons/category/7.svg';
+import MovieSvg from '@/assets/icons/category/9.svg';
 
 const MovieIcon: React.FC<CategoryIconProps> = ({ 
   width = 80,

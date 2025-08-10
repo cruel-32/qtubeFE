@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CategoryIconProps } from './types';
-import EconomySvg from '@/assets/icons/category/4.svg';
+import EconomySvg from '@/assets/icons/category/6.svg';
 
 const EconomyIcon: React.FC<CategoryIconProps> = ({ 
   width = 80,
