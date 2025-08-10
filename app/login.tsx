@@ -1,17 +1,31 @@
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { getAnalytics, logEvent, logScreenView } from '@react-native-firebase/analytics';
+
+import Logo from '@/assets/logo.svg';
 import { GoogleIcon, KakaoIcon, NaverIcon } from '@/components/icons';
 import { useTheme } from '@/modules/Theme/context/ThemeContext';
 import { FCMService } from '@/modules/Notification/service/FCMService';
 import { UserDetails } from '@/modules/User/interfaces/User';
-import { AuthService, GoogleSignInResult } from '@/modules/User/service/authService';
+import {
+  AuthService,
+  GoogleSignInResult,
+  KakaoSignInResult,
+} from '@/modules/User/service/authService';
 import { TokenService } from '@/modules/User/service/tokenService';
 import { useUserStore } from '@/modules/User/store/userStore';
 import { request } from '@/utils/apiClient';
-import { getAnalytics, logEvent, logScreenView } from '@react-native-firebase/analytics';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { toastError, toastInfo, toastSuccess } from '@/utils/toast';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 // 백엔드 Auth API 응답 타입 정의
 interface AuthResponse {
@@ -32,7 +46,7 @@ export default function LoginScreen() {
       const analytics = getAnalytics();
       await logScreenView(analytics, {
         screen_name: 'LoginScreen',
-        screen_class: 'LoginScreen'
+        screen_class: 'LoginScreen',
       });
     };
     logScreenViewEvent();
@@ -40,7 +54,7 @@ export default function LoginScreen() {
 
   const handleKakaoLogin = async () => {
     toastInfo('카카오 로그인은 준비 중입니다. 구글아이디로 로그인 하세요');
-    
+
     // if (isLoading) return;
 
     // try {
@@ -109,21 +123,21 @@ export default function LoginScreen() {
 
   const handleNaverLogin = async () => {
     if (isLoading) return; // 로딩 중이면 실행하지 않음
-    
+
     try {
       setIsLoading(true);
       const analytics = getAnalytics();
       await logEvent(analytics, 'login_attempt', {
         method: 'naver',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
-      
+
       // TODO: Implement Naver login
       console.log('Naver login pressed');
-      
+
       // 임시로 2초 대기 (실제 구현 시 제거)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       toastInfo('네이버 로그인은 준비 중입니다. 구글아이디로 로그인 하세요');
     } catch (error) {
       console.error('Naver login analytics error:', error);
@@ -135,53 +149,55 @@ export default function LoginScreen() {
 
   const handleGoogleLogin = async () => {
     if (isLoading) return; // 로딩 중이면 실행하지 않음
-    
+
     try {
       setIsLoading(true);
       console.log('🚀 구글 로그인 시작...');
-      
+
       // 1. Google Sign-In 실행하여 idToken 획득
       const result: GoogleSignInResult = await AuthService.signInWithGoogle();
-      
+
       console.log('✅ 구글 Sign-In 성공!');
       console.log('📝 idToken:', result.idToken);
       console.log('👤 사용자 정보:', result.user);
-      
+
       // 2. 백엔드 /auth/google API 호출하여 JWT 토큰들과 사용자 정보 받기
       console.log('🔐 백엔드 인증 시작...');
       const authResponse = await request<AuthResponse>('/auth/google', {
         method: 'POST',
         data: { idToken: result.idToken },
       });
-      
+
       console.log('✅ 백엔드 인증 성공!');
       console.log('🔑 JWT 토큰들 수신:', {
         accessToken: authResponse.accessToken,
         refreshToken: authResponse.refreshToken,
       });
-      
+
       // 3. JWT 토큰들을 안전한 저장소에 저장
       console.log('💾 토큰 저장 중...');
       await TokenService.storeTokens(authResponse.accessToken, authResponse.refreshToken);
       console.log('✅ 토큰 저장 완료!');
-      
+
       // 4. 사용자 정보를 앱 상태에 저장
       console.log('👤 사용자 상태 저장 중...');
       setUser(authResponse.user);
       console.log('✅ 사용자 상태 저장 완료!');
-      
+
       // 5. FCM 초기화 및 토큰 설정
       console.log('🔔 FCM 설정 시작...');
       await setupFCMAfterLogin();
-      
+
       // 6. 성공 메시지 표시 후 메인 화면으로 이동
       toastSuccess(`환영합니다, ${authResponse.user.name}님! 로그인에 성공했습니다.`);
       router.replace('/(tabs)');
-      
     } catch (error) {
       console.error('❌ 구글 로그인 실패:', error);
-      
-      toastError(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.', '로그인 실패');
+
+      toastError(
+        error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+        '로그인 실패'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -196,10 +212,10 @@ export default function LoginScreen() {
       console.log('🔔 FCM 초기화 중...');
       await FCMService.initialize();
       const fcmToken = await FCMService.getToken();
-      
+
       if (fcmToken) {
         console.log('✅ FCM 토큰 획득 성공:', fcmToken);
-        
+
         // 백엔드에 FCM 토큰 전송
         try {
           console.log('📤 FCM 토큰 백엔드 전송 중...');
@@ -209,7 +225,7 @@ export default function LoginScreen() {
           console.error('❌ FCM 토큰 전송 실패:', tokenError);
           // 토큰 전송 실패는 로그인을 방해하지 않음
         }
-        
+
         // 알림 설정 기본값(활성화) 백엔드 전송
         try {
           console.log('📤 알림 설정 기본값 전송 중...');
@@ -223,7 +239,7 @@ export default function LoginScreen() {
         console.log('⚠️ FCM 토큰 획득 실패 (권한 거부 또는 오류)');
         // FCM 토큰 획득 실패는 로그인을 방해하지 않음
       }
-      
+
       console.log('✅ FCM 설정 완료');
     } catch (error) {
       console.error('❌ FCM 설정 중 오류:', error);
@@ -237,7 +253,7 @@ export default function LoginScreen() {
       <View style={styles.content}>
         {/* Logo */}
         <View style={styles.logoContainer}>
-          <Text style={[styles.logoText, { color: colors.primary }]}>logo</Text>
+          <Logo width={88} height={88} />
         </View>
 
         {/* Title and Subtitle */}
@@ -260,33 +276,45 @@ export default function LoginScreen() {
         {/* Login Buttons */}
         <View style={styles.buttonContainer}>
           {/* Kakao Login */}
-          <TouchableOpacity 
-            style={[styles.kakaoButton, isLoading && styles.disabledButton]} 
+          <TouchableOpacity
+            style={[styles.kakaoButton, isLoading && styles.disabledButton]}
             onPress={handleKakaoLogin}
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             <KakaoIcon width={24} height={24} />
-            <Text style={[styles.kakaoButtonText, isLoading && styles.disabledButtonText]}>카카오로 시작하기</Text>
+            <Text style={[styles.kakaoButtonText, isLoading && styles.disabledButtonText]}>
+              카카오로 시작하기
+            </Text>
           </TouchableOpacity>
 
           {/* Naver Login */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.naverButton, isLoading && styles.disabledButton]}
             onPress={handleNaverLogin}
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             <NaverIcon width={24} height={24} />
-            <Text style={[styles.naverButtonText, isLoading && styles.disabledButtonText]}>네이버로 시작하기</Text>
+            <Text style={[styles.naverButtonText, isLoading && styles.disabledButtonText]}>
+              네이버로 시작하기
+            </Text>
           </TouchableOpacity>
 
           {/* Google Login */}
-          <TouchableOpacity 
-            style={[styles.googleButton, { backgroundColor: colors.card, borderColor: colors.border }, isLoading && styles.disabledButton]} 
+          <TouchableOpacity
+            style={[
+              styles.googleButton,
+              { backgroundColor: colors.card, borderColor: colors.border },
+              isLoading && styles.disabledButton,
+            ]}
             onPress={handleGoogleLogin}
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             <GoogleIcon width={24} height={24} />
-            <Text style={[styles.googleButtonText, { color: colors.text }, isLoading && styles.disabledButtonText]}>구글로 시작하기</Text>
+            <Text
+              style={[
+                styles.googleButtonText,
+                { color: colors.text },
+                isLoading && styles.disabledButtonText,
+              ]}>
+              구글로 시작하기
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -318,11 +346,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 48,
   },
-  logoText: {
-    fontSize: 36,
-    fontWeight: '400',
-    fontStyle: 'italic',
-  },
   titleContainer: {
     alignItems: 'center',
     marginBottom: 32,
@@ -347,8 +370,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 16,
   },
-  termsLink: {
-  },
+  termsLink: {},
   buttonContainer: {
     gap: 16,
   },
@@ -399,7 +421,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  
+
   // Loading 관련 스타일
   disabledButton: {
     opacity: 0.6,
@@ -436,3 +458,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+

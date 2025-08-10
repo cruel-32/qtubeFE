@@ -5,6 +5,7 @@ import { lightColors, darkColors } from '@/constants/Colors';
 interface ThemeContextType {
   theme: 'light' | 'dark';
   colors: typeof lightColors;
+  isDark: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -14,10 +15,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const resolvedTheme = themePreference === 'system' ? getSystemTheme() : themePreference;
   const colors = resolvedTheme === 'dark' ? darkColors : lightColors;
+  const isDark = resolvedTheme === 'dark';
 
   const value = {
     theme: resolvedTheme,
     colors,
+    isDark,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
