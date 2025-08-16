@@ -18,6 +18,12 @@ export function showToast({ title, message, type = 'info', visibilityTime = 2500
     position: 'bottom',
     visibilityTime,
     autoHide,
+    text1Style: {
+      fontSize: 20, // 제목 폰트 크기 1.5배 증가
+    },
+    text2Style: {
+      fontSize: 16, // 메시지 폰트 크기 1.5배 증가
+    },
   });
 }
 

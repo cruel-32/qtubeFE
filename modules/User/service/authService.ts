@@ -98,6 +98,7 @@ export class AuthService {
    */
   static async signInWithKakao(): Promise<KakaoSignInResult> {
     try {
+      console.log('Kakao Sign-In start');
       const token = await login();
       console.log('Kakao Sign-In token:', token);
       const profile: KakaoProfile = await getKakaoProfile();

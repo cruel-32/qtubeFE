@@ -1,21 +1,20 @@
+import { getAnalytics, logEvent, logScreenView } from '@react-native-firebase/analytics';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getAnalytics, logEvent, logScreenView } from '@react-native-firebase/analytics';
 
 import Logo from '@/assets/logo.svg';
 import { GoogleIcon, KakaoIcon, NaverIcon } from '@/components/icons';
-import { useTheme } from '@/modules/Theme/context/ThemeContext';
 import { FCMService } from '@/modules/Notification/service/FCMService';
+import { useTheme } from '@/modules/Theme/context/ThemeContext';
 import { UserDetails } from '@/modules/User/interfaces/User';
 import {
   AuthService,
@@ -55,70 +54,58 @@ export default function LoginScreen() {
   const handleKakaoLogin = async () => {
     toastInfo('카카오 로그인은 준비 중입니다. 구글아이디로 로그인 하세요');
 
-    // if (isLoading) return;
+    if (isLoading) return;
 
-    // try {
-    //   setIsLoading(true);
-    //   console.log('🚀 카카오 로그인 시작...');
+    try {
+      setIsLoading(true);
+      console.log('🚀 카카오 로그인 시작...');
 
-    //   // 1. Kakao Sign-In 실행하여 accessToken 획득
-    //   const result: KakaoSignInResult = await AuthService.signInWithKakao();
+      // 1. Kakao Sign-In 실행하여 accessToken 획득
+      const result: KakaoSignInResult = await AuthService.signInWithKakao();
 
-    //   console.log('✅ 카카오 Sign-In 성공!');
-    //   console.log('📝 accessToken:', result.accessToken);
-    //   console.log('👤 사용자 정보:', result.user);
+      console.log('✅ 카카오 Sign-In 성공!');
+      console.log('📝 accessToken:', result.accessToken);
+      console.log('👤 사용자 정보:', result.user);
 
-    //   // 2. 백엔드 /auth/kakao API 호출하여 JWT 토큰들과 사용자 정보 받기
-    //   console.log('🔐 백엔드 인증 시작...');
-    //   const authResponse = await request<AuthResponse>('/auth/kakao', {
-    //     method: 'POST',
-    //     data: { accessToken: result.accessToken },
-    //   });
+      // 2. 백엔드 /auth/kakao API 호출하여 JWT 토큰들과 사용자 정보 받기
+      console.log('🔐 백엔드 인증 시작...');
+      const authResponse = await request<AuthResponse>('/auth/kakao', {
+        method: 'POST',
+        data: { accessToken: result.accessToken },
+      });
 
-    //   console.log('✅ 백엔드 인증 성공!');
-    //   console.log('🔑 JWT 토큰들 수신:', {
-    //     accessToken: authResponse.accessToken,
-    //     refreshToken: authResponse.refreshToken,
-    //   });
+      console.log('✅ 백엔드 인증 성공!');
+      console.log('🔑 JWT 토큰들 수신:', {
+        accessToken: authResponse.accessToken,
+        refreshToken: authResponse.refreshToken,
+      });
 
-    //   // 3. JWT 토큰들을 안전한 저장소에 저장
-    //   console.log('💾 토큰 저장 중...');
-    //   await TokenService.storeTokens(authResponse.accessToken, authResponse.refreshToken);
-    //   console.log('✅ 토큰 저장 완료!');
+      // 3. JWT 토큰들을 안전한 저장소에 저장
+      console.log('💾 토큰 저장 중...');
+      await TokenService.storeTokens(authResponse.accessToken, authResponse.refreshToken);
+      console.log('✅ 토큰 저장 완료!');
 
-    //   // 4. 사용자 정보를 앱 상태에 저장
-    //   console.log('👤 사용자 상태 저장 중...');
-    //   setUser(authResponse.user);
-    //   console.log('✅ 사용자 상태 저장 완료!');
+      // 4. 사용자 정보를 앱 상태에 저장
+      console.log('👤 사용자 상태 저장 중...');
+      setUser(authResponse.user);
+      console.log('✅ 사용자 상태 저장 완료!');
 
-    //   // 5. FCM 초기화 및 토큰 설정
-    //   console.log('🔔 FCM 설정 시작...');
-    //   await setupFCMAfterLogin();
+      // 5. FCM 초기화 및 토큰 설정
+      console.log('🔔 FCM 설정 시작...');
+      await setupFCMAfterLogin();
 
-    //   // 6. 성공 메시지 표시 후 메인 화면으로 이동
-    //   Alert.alert(
-    //     '로그인 성공!',
-    //     `환영합니다, ${authResponse.user.name}님!\n\n로그인이 완료되었습니다.`, // Corrected newline escape here
-    //     [
-    //       {
-    //         text: '확인',
-    //         onPress: () => {
-    //           console.log('📱 메인 화면으로 이동...');
-    //           router.replace('/(tabs)');
-    //         }
-    //       }
-    //     ]
-    //   );
-    // } catch (error) {
-    //   console.error('❌ 카카오 로그인 실패:', error);
-    //   Alert.alert(
-    //     '로그인 실패',
-    //     error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
-    //     [{ text: '확인' }]
-    //   );
-    // } finally {
-    //   setIsLoading(false);
-    // }
+      // 6. 성공 메시지 표시 후 메인 화면으로 이동
+      toastSuccess(`환영합니다, ${authResponse.user.name}님! 로그인에 성공했습니다.`);
+      router.replace('/(tabs)');
+    } catch (error) {
+      console.error('❌ 카카오 로그인 실패:', error);
+      toastError(
+        error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
+        '로그인 실패'
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleNaverLogin = async () => {
