@@ -44,8 +44,6 @@
         </array>
       </dict>
       <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
         <key>CFBundleURLSchemes</key>
         <array>
           <string>kakaofcfa6ed9fbddfa9109a50007303d2764</string>

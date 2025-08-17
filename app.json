@@ -60,8 +60,8 @@
         "@react-native-seoul/kakao-login",
         {
           "kakaoAppKey": "fcfa6ed9fbddfa9109a50007303d2764",
-          "overrideKakaoSDKVersion": "2.11.2", // Optional, 
-          "kotlinVersion": "1.9.0" // #392
+          "overrideKakaoSDKVersion": "2.11.2",
+          "kotlinVersion": "1.9.0"
         }
       ],
       [

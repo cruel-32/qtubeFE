@@ -107,7 +107,7 @@ export class AuthService {
       return {
         accessToken: token.accessToken,
         user: {
-          id: profile.id,
+          id: profile.id.toString(),
           name: profile.nickname,
           email: profile.email,
           photo: profile.profileImageUrl,
