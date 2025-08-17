@@ -87,8 +87,14 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     
-    // 401 Unauthorized이고 아직 재시도하지 않았다면 (단, /auth/refresh 요청은 제외)
-    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
+    // 인증이 필요 없는 경로 목록 (요청 인터셉터와 동일)
+    const publicPaths = ['/auth/google', '/auth/kakao', '/auth/refresh', '/auth/test-login'];
+    
+    // 401 Unauthorized이고 아직 재시도하지 않았다면 (단, public 경로와 /auth/refresh 요청은 제외)
+    if (error.response?.status === 401 && 
+        !originalRequest._retry && 
+        originalRequest.url !== '/auth/refresh' &&
+        !publicPaths.includes(originalRequest.url || '')) {
       if (isRefreshing) {
         // 이미 토큰 갱신 중이면 큐에 추가하고 대기
         return new Promise((resolve, reject) => {
