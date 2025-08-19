@@ -52,8 +52,6 @@ export default function LoginScreen() {
   }, []);
 
   const handleKakaoLogin = async () => {
-    toastInfo('카카오 로그인은 준비 중입니다. 구글아이디로 로그인 하세요');
-
     if (isLoading) return;
 
     try {
