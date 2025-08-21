@@ -31,23 +31,6 @@ export class UserService {
     }
   }
 
-  static async handleKakaoLogin(kakaoUserInfo: {
-    id: string;
-    email?: string;
-    nickname?: string;
-    profileImageUrl?: string;
-  }): Promise<UserDetails> {
-    const userData: CreateUserRequest = {
-      name: kakaoUserInfo.nickname || '카카오 사용자',
-      nickName: kakaoUserInfo.nickname || '카카오 사용자',
-      picture: kakaoUserInfo.profileImageUrl,
-      platform: Platform.KAKAO,
-      email: kakaoUserInfo.email || `kakao_${kakaoUserInfo.id}@kakao.com`,
-      profile: kakaoUserInfo.id,
-    };
-
-    return await UserService.findOrCreateUser(userData);
-  }
 
   static async getCurrentUser(): Promise<UserDetails> {
     try {

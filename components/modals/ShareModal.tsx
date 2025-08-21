@@ -1,4 +1,4 @@
-import { CopyIcon, FacebookIcon, KakaoIcon, TwitterIcon } from '@/components/icons';
+import { CopyIcon, FacebookIcon, TwitterIcon } from '@/components/icons';
 import * as Clipboard from 'expo-clipboard';
 import { useEffect, useRef } from 'react';
 import {
@@ -68,9 +68,6 @@ export const ShareModal = ({ visible, onClose, shareUrl }: ShareModalProps) => {
     }
   };
 
-  const handleKakaoShare = () => {
-    toastInfo('카카오톡 공유 기능을 준비 중입니다.', '카카오톡 공유');
-  };
 
   const handleFacebookShare = () => {
     toastInfo('페이스북 공유 기능을 준비 중입니다.', '페이스북 공유');
@@ -116,12 +113,6 @@ export const ShareModal = ({ visible, onClose, shareUrl }: ShareModalProps) => {
               <Text style={styles.shareOptionText}>링크 복사</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.shareOption} onPress={handleKakaoShare}>
-              <View style={[styles.shareIconContainer, styles.kakaoIconContainer]}>
-                <KakaoIcon width={20} height={20} color="#000000" />
-              </View>
-              <Text style={styles.shareOptionText}>카카오톡</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity style={styles.shareOption} onPress={handleFacebookShare}>
               <View style={[styles.shareIconContainer, styles.facebookIconContainer]}>
@@ -216,10 +207,6 @@ const styles = StyleSheet.create({
   copyIconContainer: {
     backgroundColor: '#e0e7ff',
     borderColor: '#c7d2fe',
-  },
-  kakaoIconContainer: {
-    backgroundColor: '#fee500',
-    borderColor: '#facc15',
   },
   facebookIconContainer: {
     backgroundColor: '#1877F2',

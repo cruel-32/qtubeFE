@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QTube - 퀴즈로 즐기는 새로운 학습</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#6366F1',secondary:'#F8F9FF'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Poppins', sans-serif;
+background: #F8F9FF;
+}
+.gradient-text {
+color: #6366F1;
+}
+</style>
+</head>
+<body class="flex flex-col items-center justify-between min-h-screen bg-white">
+<div class="w-full max-w-md px-6 pt-16 pb-12 flex flex-col items-center justify-between min-h-screen">
+<!-- 로고 섹션 -->
+<div class="flex flex-col items-center justify-center pt-12 pb-8 w-full">
+<div class="mb-6">
+<h1 class="font-['Pacifico'] text-4xl gradient-text">logo</h1>
+</div>
+</div>
+<!-- 홍보 문구 섹션 -->
+<div class="text-center mb-10 px-4">
+<h2 class="text-2xl font-bold text-gray-800 mb-2">퀴즈로 즐기는 새로운 학습</h2>
+<p class="text-base text-gray-600">나만의 학습 여정을 시작하세요</p>
+</div>
+<!-- 특징 설명 섹션 -->
+<div class="w-full mb-12">
+    <div class="grid grid-cols-1 gap-6">
+        <div class="flex items-start space-x-4 p-4 bg-secondary rounded-lg">
+            <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+                <i class="ri-gamepad-line text-primary ri-lg"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-800 mb-1">게임처럼 재미있는 학습</h3>
+                <p class="text-sm text-gray-600">퀴즈를 풀며 게임하듯 즐겁게 배우세요</p>
+            </div>
+        </div>
+        <div class="flex items-start space-x-4 p-4 bg-secondary rounded-lg">
+            <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+                <i class="ri-trophy-line text-primary ri-lg"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-800 mb-1">실시간 경쟁과 보상</h3>
+                <p class="text-sm text-gray-600">다른 사용자들과 경쟁하며 성장하세요</p>
+            </div>
+        </div>
+        <div class="flex items-start space-x-4 p-4 bg-secondary rounded-lg">
+            <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+                <i class="ri-book-open-line text-primary ri-lg"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-800 mb-1">맞춤형 학습 경험</h3>
+                <p class="text-sm text-gray-600">나만의 학습 속도와 방식으로 공부하세요</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 로그인 버튼 섹션 -->
+<div class="w-full space-y-4 mb-10">
+    <button class="w-full h-12 flex items-center justify-center bg-white text-gray-700 font-medium rounded-button border border-gray-300 shadow-md transition-all hover:shadow-lg cursor-pointer">
+        <div class="w-6 h-6 mr-3 flex items-center justify-center">
+            <i class="ri-google-fill ri-lg"></i>
+        </div>
+        <span>구글로 시작하기</span>
+    </button>
+</div>
+<!-- 하단 정보 -->
+<div class="text-center text-xs text-gray-500 mb-6">
+<p>계정을 만들거나 로그인함으로써 <a href="#" class="text-primary hover:text-primary/90">서비스 약관</a>과 <a href="#" class="text-primary hover:text-primary/90">개인정보 처리방침</a>에 동의합니다.</p>
+</div>
+</div>
+<script id="login-animation">
+document.addEventListener('DOMContentLoaded', function() {
+const buttons = document.querySelectorAll('button');
+buttons.forEach(button => {
+button.addEventListener('click', function() {
+this.classList.add('scale-95');
+setTimeout(() => {
+this.classList.remove('scale-95');
+}, 150);
+});
+});
+});
+</script>
+</body>
+</html>

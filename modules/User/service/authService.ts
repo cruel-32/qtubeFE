@@ -1,7 +1,6 @@
 import { firebaseAuth, GOOGLE_WEB_CLIENT_ID } from '@/config/firebase';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { getProfile as getKakaoProfile, KakaoProfile, login } from '@react-native-seoul/kakao-login';
 
 export interface GoogleSignInResult {
   idToken: string;
@@ -13,15 +12,6 @@ export interface GoogleSignInResult {
   };
 }
 
-export interface KakaoSignInResult {
-  accessToken: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    photo?: string;
-  };
-}
 
 export class AuthService {
   private static isInitialized = false;
@@ -93,31 +83,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Kakao Sign-In 수행
-   */
-  static async signInWithKakao(): Promise<KakaoSignInResult> {
-    try {
-      console.log('Kakao Sign-In start');
-      const token = await login();
-      console.log('Kakao Sign-In token:', token);
-      const profile: KakaoProfile = await getKakaoProfile();
-      console.log('Kakao Sign-In 성profile공:', profile);
-
-      return {
-        accessToken: token.accessToken,
-        user: {
-          id: profile.id.toString(),
-          name: profile.nickname,
-          email: profile.email,
-          photo: profile.profileImageUrl,
-        },
-      };
-    } catch (error) {
-      console.error('Kakao Sign-In 실패:', error);
-      throw new Error('카카오 로그인에 실패했습니다.');
-    }
-  }
 
   /**
    * 완전한 로그아웃 (백엔드 API 호출 + 로컬 정리)
@@ -170,7 +135,7 @@ export class AuthService {
       // 6. FCM 토큰 정리
       try {
         const { FCMService } = await import('@/modules/Notification/service/FCMService');
-        await FCMService.clearToken();
+        await FCMService.deleteToken();
         console.log('✅ FCM 토큰 정리 완료');
       } catch (error) {
         console.warn('⚠️ FCM 토큰 정리 실패 (계속 진행):', error);
