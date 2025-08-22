@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    paddingTop: 48,
+    paddingTop: 24,
     paddingBottom: 24,
   },
   titleContainer: {

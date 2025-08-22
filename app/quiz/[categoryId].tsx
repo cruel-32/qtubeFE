@@ -2,14 +2,17 @@ import { BackIcon, CorrectIcon, FlagIcon, InfoIcon, NextArrowIcon, ShareIcon, Ti
 import { ShareModal } from '@/components/modals/ShareModal';
 import { AnswerService } from '@/modules/Answer/service/AnswerService';
 import { useAnswerStore } from '@/modules/Answer/store/answerStore';
+import { BadgeEvaluationService } from '@/modules/Badge/service/BadgeEvaluationService';
+import { BadgeService } from '@/modules/Badge/service/BadgeService';
 import { useCategoriesQuery } from '@/modules/Category/store/useCategoryQuery';
 import { Quiz } from '@/modules/Quiz/interfaces/Quiz';
 import { QuizService } from '@/modules/Quiz/service/QuizService';
 import { useQuizStore } from '@/modules/Quiz/store/quizStore';
 import { useReportStore } from '@/modules/Report/store/reportStore';
 import { useTheme } from '@/modules/Theme/context/ThemeContext';
-import { useUserStore } from '@/modules/User/store/userStore';
 import { useStreakStore } from '@/modules/User/store/streakStore';
+import { useUserStore } from '@/modules/User/store/userStore';
+import { toastError, toastSuccess } from '@/utils/toast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -25,9 +28,6 @@ import {
   View
 } from 'react-native';
 import QuizResultScreen from './QuizResultScreen';
-import { toastError, toastInfo, toastSuccess } from '@/utils/toast';
-import { BadgeEvaluationService } from '@/modules/Badge/service/BadgeEvaluationService';
-import { BadgeService } from '@/modules/Badge/service/BadgeService';
 
 export default function QuizScreen() {
   const { colors } = useTheme();
@@ -472,7 +472,7 @@ export default function QuizScreen() {
     const currentQuizIds = quizzes.map(quiz => quiz.id);
     const quizIdsString = currentQuizIds.join(',');
     
-    return `https://qtube.app/quiz/${categoryId}?quizIds=${quizIdsString}`;
+    return `https://qtubebe-production.up.railway.app/pages/quizzes/${categoryId}?quizIds=${quizIdsString}`;
   };
 
   // Quiz result screen handlers
