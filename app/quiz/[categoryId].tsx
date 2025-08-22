@@ -472,7 +472,7 @@ export default function QuizScreen() {
     const currentQuizIds = quizzes.map(quiz => quiz.id);
     const quizIdsString = currentQuizIds.join(',');
     
-    return `https://qtubebe-production.up.railway.app/pages/quizzes/${categoryId}?quizIds=${quizIdsString}`;
+    return `https://qtubebe-production.up.railway.app/pages/quizzes/share/${categoryId}?quizIds=${quizIdsString}`;
   };
 
   // Quiz result screen handlers
