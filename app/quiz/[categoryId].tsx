@@ -393,23 +393,19 @@ export default function QuizScreen() {
             newBadges.forEach(badge => {
               BadgeService.awardBadge(badge.id);
             });
-            toastSuccess(`축하합니다! 다음 배지를 획득했습니다: ${newBadges.map(b => b.name).join(', ')}`, '새로운 배지 획득!');
+            // 칭호 이름들을 더 깔끔하게 표시
+            const badgeNames = newBadges.map(b => b.name).join('\n• ');
+            toastSuccess(`🎉 축하합니다!\n\n새로운 칭호를 획득했습니다:\n• ${badgeNames}`, '칭호 획득!');
           }
-            if (newBadges.length > 0) {
-              newBadges.forEach(badge => {
-                BadgeService.awardBadge(badge.id);
-              });
-              toastSuccess(`축하합니다! 다음 배지를 획득했습니다: ${newBadges.map(b => b.name).join(', ')}`, '새로운 배지 획득!');
-            }
-          });
-        }
+        });
+      }
 
-        console.log('Quiz completed!', {
+      console.log('Quiz completed!', {
         answers,
         timeSpentPerQuestion,
         totalTimeSpent: timeSpentPerQuestion.reduce((sum, time) => sum + time, 0),
         averageTimePerQuestion: timeSpentPerQuestion.reduce((sum, time) => sum + time, 0) / timeSpentPerQuestion.length,
-        finalScore: results.filter(r => r.isCorrect).length
+        finalScore: results.filter(r => r.isCorrect).length,
       });
     }
   };

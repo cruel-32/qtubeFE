@@ -38,6 +38,38 @@ interface ExtendedRankingItem extends RankingItem {
   title?: string; // 기본 타이틀 제공
 }
 
+// 사용자의 장착한 배지에서 가장 높은 등급의 배지 이름을 가져오는 함수
+const getUserTitle = (user: RankingItem['user']): string => {
+  if (!user.userBadges || !user.equippedBadgeIds || user.equippedBadgeIds.length === 0) {
+    return '퀴즈 도전자';
+  }
+
+  // 장착된 배지들 중에서 가장 높은 등급의 배지 찾기
+  const equippedBadges = user.userBadges.filter(userBadge => 
+    user.equippedBadgeIds!.includes(userBadge.badge.id)
+  );
+
+  if (equippedBadges.length === 0) {
+    return '퀴즈 도전자';
+  }
+
+  // 배지 등급 순서 정의 (높은 등급부터)
+  const gradeOrder = ['GRANDMASTER', 'MASTER', 'DIAMOND', 'PLATINUM', 'GOLD', 'SILVER', 'BRONZE'];
+  
+  // 가장 높은 등급의 배지 찾기
+  const highestBadge = equippedBadges.reduce((highest, current) => {
+    const currentGradeIndex = gradeOrder.indexOf(current.badge.grade);
+    const highestGradeIndex = gradeOrder.indexOf(highest.badge.grade);
+    
+    if (currentGradeIndex < highestGradeIndex || highestGradeIndex === -1) {
+      return current;
+    }
+    return highest;
+  });
+
+  return highestBadge.badge.name;
+};
+
 type PeriodType = 'daily' | 'weekly' | 'monthly';
 
 // 카테고리별 아이콘 매핑
@@ -113,20 +145,21 @@ export default function RankingScreen() {
   const transformRankingData = (rankings: RankingItem[], myRanking: MyRankingResponse | undefined): ExtendedRankingItem[] => {
     const transformed = rankings.map((item): ExtendedRankingItem => ({
       ...item,
-      title: '퀴즈 도전자', // 기본 타이틀
+      title: getUserTitle(item.user), // 사용자의 실제 칭호
       isCurrentUser: false,
     }));
 
     if (myRanking && myRanking.rank && myRanking.user && !transformed.find(item => item.user.id === myRanking.user.id)) {
       transformed.push({
         ...myRanking,
-        title: '퀴즈 도전자',
+        title: getUserTitle(myRanking.user),
         isCurrentUser: true,
       });
     } else if (myRanking && myRanking.user) {
       const index = transformed.findIndex(item => item.user.id === myRanking.user.id);
       if (index >= 0 && transformed[index]) {
         transformed[index].isCurrentUser = true;
+        transformed[index].title = getUserTitle(myRanking.user);
       }
     }
 
@@ -289,7 +322,7 @@ export default function RankingScreen() {
     const podiumColor = isFirst ? colors.primary : colors.accent;
 
     return (
-              <View key={user.user.id} style={[styles.topThreeItem, { marginTop: position.marginTop }]}>
+      <View key={user.user.id} style={[styles.topThreeItem, { marginTop: position.marginTop }]}>
         <View style={[
           styles.topThreeAvatar,
           { 
@@ -357,7 +390,7 @@ export default function RankingScreen() {
               {user.user.nickName}
             </Text>
             <Text style={[styles.rankingTitle, { color: colors.secondary }, isCurrentUser && { color: colors.primary + 'b3'}]}>
-              {user.title || '퀴즈 도전자'}
+              {user.title}
             </Text>
           </View>
         </View>

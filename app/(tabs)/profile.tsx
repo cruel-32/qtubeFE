@@ -1,5 +1,7 @@
+import { BadgeSelectorModal } from '@/components/modals/BadgeSelectorModal';
 import { ThemeModal } from '@/components/modals/ThemeModal';
 import { Header } from '@/components/ui/Header';
+import { useBadgeStore } from '@/modules/Badge/store/useBadgeStore';
 import { FCMService } from '@/modules/Notification/service/FCMService';
 import { notificationService } from '@/modules/Notification/service/NotificationService';
 import { useNotificationStore } from '@/modules/Notification/store/useNotificationStore';
@@ -10,7 +12,7 @@ import { UserService } from '@/modules/User/service/UserService';
 import { useUserStore } from '@/modules/User/store/userStore';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -26,6 +28,7 @@ import {
   View,
 } from 'react-native';
 import { toastError, toastInfo, toastSuccess } from '@/utils/toast';
+import { Badge } from '@/modules/Badge/interfaces/Badge';
 
 interface SettingItemProps {
   icon: string;
@@ -88,6 +91,13 @@ export default function ProfileScreen() {
   const { colors } = useTheme();
   const { theme: themePreference, setTheme } = useThemeStore();
   const router = useRouter();
+  const { equippedBadgeIds, allBadges, setEquippedBadges, fetchMyBadges, fetchAllBadges, fetchEquippedBadges, updateEquippedBadges } = useBadgeStore();
+  const [isBadgeModalVisible, setIsBadgeModalVisible] = useState(false);
+
+  const equippedBadges = useMemo(() => {
+    if (!equippedBadgeIds || !allBadges) return [];
+    return equippedBadgeIds.map(id => allBadges.find(b => b.id === id)).filter((b): b is Badge => b !== undefined);
+  }, [equippedBadgeIds, allBadges]);
 
   const {
     isSubscribedToServer,
@@ -135,6 +145,18 @@ export default function ProfileScreen() {
       setDailyQuizTime(time);
     });
   }, [user, setIsSubscribedToServer]);
+
+  useEffect(() => {
+    fetchMyBadges();
+    fetchAllBadges();
+    fetchEquippedBadges();
+  }, [fetchMyBadges, fetchAllBadges, fetchEquippedBadges]);
+
+  const handleSaveBadges = (selectedBadges: Badge[]) => {
+    const badgeIds = selectedBadges.map(b => b.id);
+    updateEquippedBadges(badgeIds);
+    toastSuccess('칭호가 성공적으로 업데이트되었습니다.');
+  };
 
   const handleDailyQuizToggle = async (value: boolean) => {
     setDailyQuizEnabled(value);
@@ -297,12 +319,14 @@ export default function ProfileScreen() {
                 <Text style={[styles.profileName, { color: colors.text }]}>{user?.name || '퀴즈러버'}</Text>
                 <Text style={[styles.profileEmail, { color: colors.secondary }]}>{user?.email || 'quizlover@email.com'}</Text>
                 <View style={styles.badgeContainer}>
-                  <View style={[styles.levelBadge, { backgroundColor: colors.primary + '20' }]}>
-                    <Text style={[styles.levelText, { color: colors.primary }]}>Lv.8</Text>
-                  </View>
-                  <View style={[styles.titleBadge, { backgroundColor: colors.border }]}>
-                    <Text style={[styles.titleText, { color: colors.secondary }]}>퀴즈 도전자</Text>
-                  </View>
+                  <TouchableOpacity onPress={() => setIsBadgeModalVisible(true)} style={[styles.manageBadgeButton, { backgroundColor: colors.border }]}>
+                    <Text style={[styles.manageBadgeText, { color: colors.text }]}>칭호 관리</Text>
+                  </TouchableOpacity>
+                  {equippedBadges.slice(0, 5).map(badge => (
+                    <View key={badge.id} style={[styles.titleBadge, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.titleText, { color: colors.primary }]}>{badge.name}</Text>
+                    </View>
+                  ))}
                 </View>
               </View>
               <TouchableOpacity
@@ -452,6 +476,14 @@ export default function ProfileScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Badge Selector Modal */}
+      <BadgeSelectorModal
+        visible={isBadgeModalVisible}
+        onClose={() => setIsBadgeModalVisible(false)}
+        onSave={handleSaveBadges}
+        currentlyEquipped={equippedBadges}
+      />
 
       {/* Profile Edit Modal */}
       <Modal
@@ -696,6 +728,17 @@ const styles = StyleSheet.create({
   badgeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  manageBadgeButton: {
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  manageBadgeText: {
+    fontSize: 12,
+    fontWeight: '500',
   },
   levelBadge: {
     backgroundColor: '#EBF4FF',

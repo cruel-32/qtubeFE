@@ -1,9 +1,16 @@
 import { z } from 'zod';
+import { Badge } from '../../Badge/interfaces/Badge';
 
 export interface RankingUser {
   id: string;
   nickName: string;
   picture: string;
+  userBadges?: {
+    id: number;
+    badge: Badge;
+    createdAt: string;
+  }[];
+  equippedBadgeIds?: number[];
 }
 
 export interface RankingItem {
@@ -60,6 +67,19 @@ export const RankingUserSchema = z.object({
   id: z.string(),
   nickName: z.string(),
   picture: z.string(),
+  userBadges: z.array(z.object({
+    id: z.number(),
+    badge: z.object({
+      id: z.number(),
+      name: z.string(),
+      description: z.string(),
+      imageUrl: z.string(),
+      type: z.string(),
+      grade: z.string(),
+    }),
+    createdAt: z.string(),
+  })).optional(),
+  equippedBadgeIds: z.array(z.number()).optional(),
 })
 
 export const RankingItemSchema = z.object({

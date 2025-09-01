@@ -17,4 +17,16 @@ export const BadgeService = {
       requireAuth: true,
     });
   },
+
+  getEquippedBadges: async (): Promise<number[]> => {
+    return request<number[]>('user-badges/equipped', { method: 'GET', requireAuth: true });
+  },
+
+  updateEquippedBadges: async (badgeIds: number[]): Promise<{ equippedBadgeIds: number[] }> => {
+    return request<{ equippedBadgeIds: number[] }>('user-badges/equipped', {
+      method: 'PUT',
+      data: { badgeIds },
+      requireAuth: true,
+    });
+  },
 };

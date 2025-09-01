@@ -24,7 +24,7 @@ export interface Badge {
   description: string;
   imageUrl: string;
   type: string;
-  condition: string; // JSON string of BadgeConditionType
+  condition: BadgeConditionType; // Now directly as object (jsonb type from backend)
   grade: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM' | 'DIAMOND' | 'MASTER' | 'GRANDMASTER';
   createdAt: string;
   updatedAt: string;

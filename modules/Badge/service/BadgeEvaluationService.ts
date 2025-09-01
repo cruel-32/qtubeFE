@@ -1,19 +1,39 @@
 import { useAnswerStore } from '../../Answer/store/answerStore';
-import { Badge, BadgeConditionType } from '../interfaces/Badge';
+import { Badge, BadgeCondition, BadgeConditionType } from '../interfaces/Badge';
 import { BadgeService } from './BadgeService';
+import { CategoryService } from '../../Category/service/CategoryService';
+import { Category } from '../../Category/interfaces/Category';
+
+function getAllSubCategoryIds(categoryId: number, categories: Category[]): number[] {
+    const subCategoryIds: number[] = [];
+    const queue: number[] = [categoryId];
+    const visited: Set<number> = new Set();
+
+    while (queue.length > 0) {
+        const currentId = queue.shift()!;
+        if (!visited.has(currentId)) {
+            visited.add(currentId);
+            subCategoryIds.push(currentId);
+
+            const children = categories.filter(c => c.parentId === currentId);
+            for (const child of children) {
+                if (!visited.has(child.id)) {
+                    queue.push(child.id);
+                }
+            }
+        }
+    }
+    return subCategoryIds;
+}
+
 
 export const BadgeEvaluationService = {
-  evaluateNewBadges: async (categoryId: number): Promise<Badge[]> => {
+  evaluateNewBadges: async (_playedCategoryId: number): Promise<Badge[]> => {
     try {
       const allBadges = await BadgeService.getAllBadges();
-      console.log('allBadges.length', allBadges.length);
       const myBadges = await BadgeService.getMyBadges();
-      console.log('myBadges', myBadges);
       const myBadgeIds = new Set(myBadges.map(b => b.badgeId));
-      console.log('myBadgeIds', myBadgeIds);
-
-      const userStats = useAnswerStore.getState().getStats(categoryId);
-      console.log('userStats', userStats);
+      const allCategories = await CategoryService.getAllCategories();
 
       const newBadges = allBadges.filter(badge => {
         if (myBadgeIds.has(badge.id)) {
@@ -21,51 +41,39 @@ export const BadgeEvaluationService = {
         }
 
         try {
-          if (!badge.condition || badge.condition.trim() === '') {
+          if (!badge.condition) {
             return false;
           }
 
-          let conditionStr = badge.condition.trim();
+          // condition is now directly an object (jsonb from backend), no need to parse
+          const condition: BadgeConditionType = badge.condition;
 
-          // Clean up the string before parsing
-          // 1. Remove comments, which are not valid in JSON
-          conditionStr = conditionStr.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '');
+          const check = (cond: BadgeCondition): boolean => {
+            const { categoryId } = cond;
+            let statsCategoryIds: number[] = [];
 
-          // 2. Remove extra wrapping quotes if they exist
-          if ((conditionStr.startsWith("'") && conditionStr.endsWith("'")) ||
-              (conditionStr.startsWith('"') && conditionStr.endsWith('"'))) {
-            conditionStr = conditionStr.substring(1, conditionStr.length - 1);
-          }
-
-          const condition: BadgeConditionType = JSON.parse(conditionStr);
+            if (categoryId) {
+                // Badge is for a specific category, get stats for it and all its sub-categories
+                statsCategoryIds = getAllSubCategoryIds(categoryId, allCategories);
+            }
+            // If categoryId is not present, it's a global badge, and getStats will be called with an empty array, getting all stats.
+            
+            const userStats = useAnswerStore.getState().getStats(statsCategoryIds);
+            return checkCondition(userStats, cond);
+          };
 
           if ('logicalOperator' in condition) {
-            // Composite condition
             if (condition.logicalOperator === 'AND') {
-              return condition.conditions.every(c => {
-                if (c.categoryId && c.categoryId !== categoryId) {
-                  return true; // This condition is for a different category, so we ignore it (treat as passed for 'AND')
-                }
-                return checkCondition(userStats, c);
-              });
+              return condition.conditions.every(check);
             } else { // OR
-              return condition.conditions.some(c => {
-                if (c.categoryId && c.categoryId !== categoryId) {
-                  return false; // This condition is for a different category, so we ignore it (treat as failed for 'OR')
-                }
-                return checkCondition(userStats, c);
-              });
+              return condition.conditions.some(check);
             }
           } else {
-            // Single condition
-            if (condition.categoryId && condition.categoryId !== categoryId) {
-              return false; // Not for this category
-            }
-            return checkCondition(userStats, condition);
+            return check(condition);
           }
         } catch (error) {
           console.error(`Error processing badge with id: ${badge.id}. Skipping.`, error);
-          console.error('Invalid badge condition was:', badge.condition);
+          console.error('Invalid badge condition was:', JSON.stringify(badge.condition));
           return false;
         }
       });

@@ -26,7 +26,7 @@ interface AnswerState {
   addAnswer: (userId: string, answer: Answer) => Promise<void>;
   getAnswersByUserId: (userId: string) => Promise<void>;
   submitAnswer: (data: SubmitAnswerRequest) => Promise<SubmitAnswerResponse>;
-  getStats: (categoryId?: number) => UserStats;
+  getStats: (categoryIds?: number[]) => UserStats;
 }
 
 const getStorageKey = (userId: string) => `userAnswers_${userId}`;
@@ -132,12 +132,12 @@ export const useAnswerStore = create<AnswerState>((set, get) => ({
     }
   },
 
-    getStats: (categoryId?: number): UserStats => {
+        getStats: (categoryIds?: number[]): UserStats => {
     const { answers } = get();
     const answerList = Object.values(answers);
 
-    const filteredAnswers = categoryId
-      ? answerList.filter(answer => answer.categoryId === categoryId)
+    const filteredAnswers = categoryIds && categoryIds.length > 0
+      ? answerList.filter(answer => categoryIds.includes(answer.categoryId))
       : answerList;
 
     // Sort answers by creation time to calculate consecutive correct answers
