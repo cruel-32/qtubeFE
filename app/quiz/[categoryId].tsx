@@ -1,4 +1,5 @@
 import { BackIcon, CorrectIcon, FlagIcon, InfoIcon, NextArrowIcon, ShareIcon, TimeIcon, WrongIcon } from '@/components/icons';
+import { CharacterInfoModal } from '@/components/modals/CharacterInfoModal';
 import { ShareModal } from '@/components/modals/ShareModal';
 import { AnswerService } from '@/modules/Answer/service/AnswerService';
 import { useAnswerStore } from '@/modules/Answer/store/answerStore';
@@ -17,6 +18,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
   BackHandler,
+  Dimensions,
   Modal,
   Platform,
   SafeAreaView,
@@ -32,6 +34,23 @@ import QuizResultScreen from './QuizResultScreen';
 export default function QuizScreen() {
   const { colors } = useTheme();
   const { categoryId, quizIds } = useLocalSearchParams<{ categoryId: string; quizIds?: string;}>();
+  
+  // Get screen dimensions for responsive design
+  const { width: screenWidth } = Dimensions.get('window');
+  
+  // Responsive font sizes based on screen width
+  // iPhone Pro Max (428px) as base, scale down for smaller screens
+  const getResponsiveFontSize = (baseSize: number) => {
+    const baseWidth = 428; // iPhone Pro Max width
+    const scale = screenWidth / baseWidth;
+    const scaledSize = baseSize * scale * 1.1; // 10% increase for better readability
+    
+    // Set minimum and maximum bounds
+    const minSize = baseSize * 0.88; // 88% minimum (10% increase from 0.8)
+    const maxSize = baseSize * 1.21; // 121% maximum (10% increase from 1.1)
+    
+    return Math.max(minSize, Math.min(scaledSize, maxSize));
+  };
   const router = useRouter();
   const { user } = useUserStore();
   const { getCategoryById } = useCategoriesQuery();
@@ -93,6 +112,9 @@ export default function QuizScreen() {
   
   // Share modal state
   const [showShareModal, setShowShareModal] = useState(false);
+  
+  // Character info modal state
+  const [showCharacterModal, setShowCharacterModal] = useState(false);
 
 
   // Get category info
@@ -102,6 +124,10 @@ export default function QuizScreen() {
   // Get current quiz from loaded quizzes
   const currentQuiz = quizzes[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+
+
+
+
 
   // Quiz loading effect - localAnswers 변경에 영향받지 않도록 처리
   useEffect(() => {
@@ -513,7 +539,10 @@ export default function QuizScreen() {
                 ]}>
                   <Text style={[
                     styles.optionLetterText,
-                    { color: colors.secondary },
+                    { 
+                      color: colors.secondary,
+                      fontSize: getResponsiveFontSize(14) // Responsive font size for option letters
+                    },
                     isSelected && { color: '#ffffff' }
                   ]}>
                     {letter}
@@ -521,7 +550,11 @@ export default function QuizScreen() {
                 </View>
                 <Text style={[
                   styles.optionText,
-                  { color: colors.text },
+                  { 
+                    color: colors.text,
+                    fontSize: getResponsiveFontSize(14), // Responsive font size for options
+                    lineHeight: getResponsiveFontSize(20)
+                  },
                   isSelected && { color: colors.primary, fontWeight: '500' }
                 ]}>
                   {option}
@@ -540,7 +573,13 @@ export default function QuizScreen() {
         <TextInput
           style={[
             styles.textInput,
-            { backgroundColor: colors.card, borderColor: colors.border, color: colors.text },
+            { 
+              backgroundColor: colors.card, 
+              borderColor: colors.border, 
+              color: colors.text,
+              fontSize: getResponsiveFontSize(14), // Responsive font size for text input
+              minHeight: getResponsiveFontSize(46) // Responsive height
+            },
             isAnswerSubmitted && styles.textInputDisabled
           ]}
           value={textAnswer}
@@ -585,7 +624,13 @@ export default function QuizScreen() {
               <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                 <BackIcon width={24} height={24} color={colors.text} />
               </TouchableOpacity>
-              <Text style={[styles.categoryTitle, { color: colors.text }]}>{categoryName}</Text>
+              <Text style={[
+                styles.categoryTitle, 
+                { 
+                  color: colors.text,
+                  fontSize: getResponsiveFontSize(18) // Responsive font size for category title
+                }
+              ]}>{categoryName}</Text>
             </View>
           </View>
         </View>
@@ -605,9 +650,21 @@ export default function QuizScreen() {
             <TouchableOpacity onPress={handleBack} style={styles.backButton}>
               <BackIcon width={24} height={24} color={colors.text} />
             </TouchableOpacity>
-            <Text style={[styles.categoryTitle, { color: colors.text }]}>{categoryName}</Text>
+            <Text style={[
+              styles.categoryTitle, 
+              { 
+                color: colors.text,
+                fontSize: getResponsiveFontSize(18) // Responsive font size for category title
+              }
+            ]}>{categoryName}</Text>
           </View>
           <View style={styles.headerRight}>
+            <TouchableOpacity 
+              style={styles.characterInfoButton}
+              onPress={() => setShowCharacterModal(true)}
+            >
+              <Text style={[styles.characterInfoButtonText, { color: colors.primary }]}>출제자</Text>
+            </TouchableOpacity>
             <TouchableOpacity 
               style={styles.shareButton}
               onPress={handleShareButtonPress}
@@ -637,9 +694,18 @@ export default function QuizScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Quiz Content */}
         <View style={[styles.quizContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          {/* Question */}
+          {/* Question Container */}
           <View style={styles.questionContainer}>
-            <Text style={[styles.questionText, { color: colors.text }]}>{currentQuiz?.question || ''}</Text>
+            <Text style={[
+              styles.questionText, 
+              { 
+                color: colors.text,
+                fontSize: getResponsiveFontSize(18), // Responsive font size for questions
+                lineHeight: getResponsiveFontSize(28)
+              }
+            ]}>
+              {currentQuiz?.question || ''}
+            </Text>
           </View>
 
           {/* Answer Section */}
@@ -657,6 +723,7 @@ export default function QuizScreen() {
           >
             <Text style={[
               styles.submitButtonText,
+              { fontSize: getResponsiveFontSize(16) }, // Responsive font size for submit button
               !isSubmitButtonEnabled && { color: colors.secondary }
             ]}>
               {isAnswerSubmitted ? '다음 문제' : '정답 제출하기'}
@@ -666,19 +733,54 @@ export default function QuizScreen() {
 
         {/* Quiz Tips */}
         <View style={[styles.tipsContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.tipsTitle, { color: colors.text }]}>퀴즈 팁</Text>
+          <Text style={[
+            styles.tipsTitle, 
+            { 
+              color: colors.text,
+              fontSize: getResponsiveFontSize(16) // Responsive font size for tips title
+            }
+          ]}>
+            퀴즈 팁
+          </Text>
           <View style={styles.tipsList}>
             <View style={styles.tipItem}>
               <InfoIcon width={12} height={12} color={colors.secondary} />
-              <Text style={[styles.tipText, { color: colors.secondary }]}>10초 이내에 정답을 맞추면 보너스 점수를 획득할 수 있습니다.</Text>
+              <Text style={[
+                styles.tipText, 
+                { 
+                  color: colors.secondary,
+                  fontSize: getResponsiveFontSize(12), // Responsive font size for tips
+                  lineHeight: getResponsiveFontSize(16)
+                }
+              ]}>
+                10초 이내에 정답을 맞추면 보너스 점수를 획득할 수 있습니다.
+              </Text>
             </View>
             <View style={styles.tipItem}>
               <InfoIcon width={12} height={12} color={colors.secondary} />
-              <Text style={[styles.tipText, { color: colors.secondary }]}>연속 정답 시 보너스 점수를 획득할 수 있습니다.</Text>
+              <Text style={[
+                styles.tipText, 
+                { 
+                  color: colors.secondary,
+                  fontSize: getResponsiveFontSize(12),
+                  lineHeight: getResponsiveFontSize(16)
+                }
+              ]}>
+                연속 정답 시 보너스 점수를 획득할 수 있습니다.
+              </Text>
             </View>
             <View style={styles.tipItem}>
               <InfoIcon width={12} height={12} color={colors.secondary} />
-              <Text style={[styles.tipText, { color: colors.secondary }]}>정답을 제출한 후에는 변경할 수 없습니다.</Text>
+              <Text style={[
+                styles.tipText, 
+                { 
+                  color: colors.secondary,
+                  fontSize: getResponsiveFontSize(12),
+                  lineHeight: getResponsiveFontSize(16)
+                }
+              ]}>
+                정답을 제출한 후에는 변경할 수 없습니다.
+              </Text>
             </View>
           </View>
         </View>
@@ -898,6 +1000,13 @@ export default function QuizScreen() {
         shareUrl={generateShareUrl()}
       />
 
+      {/* Character Info Modal */}
+      <CharacterInfoModal
+        visible={showCharacterModal}
+        categoryId={categoryId || '1'}
+        onClose={() => setShowCharacterModal(false)}
+      />
+
     </SafeAreaView>
   );
 }
@@ -909,9 +1018,9 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#ffffff',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingTop: Platform.OS === 'android' ? 36 : 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingTop: Platform.OS === 'android' ? 34 : 10,
   },
   headerContent: {
     flexDirection: 'row',
@@ -924,14 +1033,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backButton: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
+    marginRight: 4,
   },
   categoryTitle: {
-    fontSize: 18,
     fontWeight: '700',
     color: '#1f2937',
     fontFamily: 'Roboto',
@@ -940,31 +1048,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  characterInfoButton: {
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    marginRight: 4,
+    borderRadius: 10,
+    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+  },
+  characterInfoButtonText: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: '#4f46e5',
+    fontFamily: 'Roboto',
+  },
   shareButton: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
+    marginRight: 4,
   },
   progressText: {
     fontSize: 14,
     fontWeight: '500',
     color: '#1f2937',
-    marginRight: 8,
+    marginRight: 4,
     fontFamily: 'Roboto',
   },
   timerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 14,
     backgroundColor: 'rgba(79, 70, 229, 0.1)',
-    gap: 4,
+    gap: 3,
   },
   timerText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: '#4f46e5',
     fontFamily: 'Roboto',
@@ -1003,10 +1124,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   questionText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '500',
     color: '#1f2937',
-    lineHeight: 28,
+    lineHeight: 31,
     fontFamily: 'Roboto',
   },
   optionsContainer: {
@@ -1047,7 +1168,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4f46e5',
   },
   optionLetterText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
     color: '#374151',
     fontFamily: 'Roboto',
@@ -1057,10 +1178,10 @@ const styles = StyleSheet.create({
   },
   optionText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '400',
     color: '#1f2937',
-    lineHeight: 24,
+    lineHeight: 26,
     fontFamily: 'Roboto',
   },
   optionTextSelected: {
@@ -1077,11 +1198,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: '#1f2937',
     fontFamily: 'Roboto',
-    minHeight: 46,
+    minHeight: 51,
     textAlignVertical: 'center',
   },
   textInputDisabled: {
@@ -1102,7 +1223,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e5e7eb',
   },
   submitButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
     color: '#ffffff',
     fontFamily: 'Roboto',
@@ -1120,7 +1241,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   tipsTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
     color: '#1f2937',
     marginBottom: 16,
@@ -1135,10 +1256,10 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
   },
   tipText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '400',
     color: '#4b5563',
-    lineHeight: 16,
+    lineHeight: 18,
     marginLeft: 8,
     flex: 1,
     fontFamily: 'Roboto',
@@ -1150,7 +1271,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '400',
     color: '#6b7280',
     textAlign: 'center',
@@ -1174,7 +1295,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1f2937',
     textAlign: 'center',
@@ -1182,7 +1303,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
   },
   modalMessage: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: '#4b5563',
     textAlign: 'center',
@@ -1203,7 +1324,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cancelButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '400',
     color: '#4b5563',
     fontFamily: 'Roboto',
@@ -1217,7 +1338,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   confirmButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '400',
     color: '#ffffff',
     fontFamily: 'Roboto',
@@ -1247,7 +1368,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   reportButtonText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '400',
     color: '#9ca3af',
     fontFamily: 'Roboto',
@@ -1269,7 +1390,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fee2e2',
   },
   resultTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     textAlign: 'center',
     marginBottom: 8,
@@ -1282,7 +1403,7 @@ const styles = StyleSheet.create({
     color: '#ef4444',
   },
   resultMessage: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: '#6b7280',
     textAlign: 'center',
@@ -1302,26 +1423,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   answerLabel: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: '#374151',
     fontFamily: 'Roboto',
     marginLeft: 8,
   },
   answerValue: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: '#4f46e5',
     fontFamily: 'Roboto',
     flex: 1,
     flexWrap: 'wrap',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   answerExplanation: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: '#374151',
-    lineHeight: 20,
+    lineHeight: 22,
     fontFamily: 'Roboto',
   },
   nextButton: {
@@ -1335,7 +1456,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   nextButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
     color: '#ffffff',
     fontFamily: 'Roboto',
@@ -1351,7 +1472,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   reportModalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1f2937',
     fontFamily: 'Roboto',
@@ -1363,7 +1484,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   reportCloseButtonText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '400',
     color: '#9ca3af',
   },
@@ -1375,7 +1496,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   reportLabel: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: '#374151',
     marginBottom: 8,
@@ -1388,11 +1509,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: '#1f2937',
     fontFamily: 'Roboto',
-    minHeight: 40,
+    minHeight: 44,
   },
   reportCategoryContainer: {
     flexDirection: 'row',
@@ -1412,7 +1533,7 @@ const styles = StyleSheet.create({
     borderColor: '#4f46e5',
   },
   reportCategoryButtonText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '400',
     color: '#6b7280',
     fontFamily: 'Roboto',
@@ -1428,11 +1549,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: '#1f2937',
     fontFamily: 'Roboto',
-    minHeight: 80,
+    minHeight: 88,
   },
   reportButtonContainer: {
     flexDirection: 'row',
@@ -1448,7 +1569,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   reportCancelButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '400',
     color: '#4b5563',
     fontFamily: 'Roboto',
@@ -1462,7 +1583,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   reportSubmitButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
     color: '#ffffff',
     fontFamily: 'Roboto',
@@ -1483,7 +1604,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   timeText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: '#ef4444',
     marginLeft: 6,
@@ -1502,14 +1623,14 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   statNumber: {
-    fontSize: 28,
+    fontSize: 31,
     fontWeight: '700',
     color: '#1f2937',
     fontFamily: 'Roboto',
     marginBottom: 6,
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
     color: '#6b7280',
     fontFamily: 'Roboto',

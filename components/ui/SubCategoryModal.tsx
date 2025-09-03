@@ -1,7 +1,8 @@
 import { CloseIcon } from '@/components/icons';
+import { CharacterInfoModal } from '@/components/modals/CharacterInfoModal';
 import { useCategoriesQuery } from '@/modules/Category/store/useCategoryQuery';
 import { useTheme } from '@/modules/Theme/context/ThemeContext';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -36,6 +37,7 @@ export const SubCategoryModal: React.FC<SubCategoryModalProps> = ({
   const { getUISubCategoriesByParentId } = useCategoriesQuery();
   const slideAnim = useRef(new Animated.Value(screenHeight)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
+  const [showCharacterModal, setShowCharacterModal] = useState(false);
 
   // 서브카테고리 가져오기
   const subCategories = parentCategoryId 
@@ -110,7 +112,17 @@ export const SubCategoryModal: React.FC<SubCategoryModalProps> = ({
             >
               {/* Modal Header */}
               <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                <Text style={[styles.title, { color: colors.text }]}>{parentCategoryName} 세부 카테고리</Text>
+                <View style={styles.headerLeft}>
+                  <Text style={[styles.title, { color: colors.text }]}>{parentCategoryName} 세부 카테고리</Text>
+                  {parentCategoryId && (
+                    <TouchableOpacity 
+                      style={styles.characterInfoButton}
+                      onPress={() => setShowCharacterModal(true)}
+                    >
+                      <Text style={[styles.characterInfoButtonText, { color: colors.primary }]}>출제자</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
                 <TouchableOpacity style={[styles.closeButton, { backgroundColor: colors.background }]} onPress={onClose}>
                   <CloseIcon width={24} height={24} color={colors.text} />
                 </TouchableOpacity>
@@ -148,6 +160,15 @@ export const SubCategoryModal: React.FC<SubCategoryModalProps> = ({
           </TouchableWithoutFeedback>
         </Animated.View>
       </TouchableWithoutFeedback>
+
+      {/* Character Info Modal */}
+      {parentCategoryId && (
+        <CharacterInfoModal
+          visible={showCharacterModal}
+          categoryId={parentCategoryId.toString()}
+          onClose={() => setShowCharacterModal(false)}
+        />
+      )}
     </Modal>
   );
 };
@@ -176,10 +197,29 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f3f4f6',
     flexShrink: 0, // 헤더는 고정 크기 유지
   },
+  headerLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
   title: {
     fontSize: 18,
     fontWeight: '700',
     color: '#111827',
+    fontFamily: 'Roboto',
+  },
+  characterInfoButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+  },
+  characterInfoButtonText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#4f46e5',
     fontFamily: 'Roboto',
   },
   closeButton: {
