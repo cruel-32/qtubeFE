@@ -74,4 +74,36 @@ target 'qtubeapps' do
       end
     end
   end
+
+
+  # ios/Podfile
+  # ...
+
+  post_install do |installer|
+    react_native_post_install(installer)
+    __apply_Xcode_settings(installer.pods_project)
+
+    installer.pods_project.targets.each do |target|
+      if target.name == 'hermes-engine'
+        target.build_configurations.each do |config|
+          # Hermes 엔진에 대해 dSYM 생성을 강제합니다.
+          config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'DWARF with dSYM File'
+          # 심볼 스트리핑 방지 (릴리즈 빌드에서 dSYM이 생성되지 않는 것을 방지)
+          config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'NO'
+          config.build_settings['STRIP_STYLISH_SYMBOLS'] = 'NO'
+          config.build_settings['STRIP_SWIFT_SYMBOLS'] = 'NO'
+        end
+      end
+      # 앱 타겟의 Release 설정도 DWARF with dSYM File 인지 다시 확인
+      if target.name == 'YOUR_APP_NAME' # YOUR_APP_NAME을 실제 앱 타겟 이름으로 변경
+        target.build_configurations.each do |config|
+          if config.name == 'Release' || config.name.include?('Release')
+            config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'DWARF with dSYM File'
+          end
+        end
+      end
+    end
+  end
+
+
 end

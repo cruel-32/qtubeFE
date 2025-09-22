@@ -400,6 +400,8 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = qtubeapps/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = qtube;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -432,6 +434,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8C6C9Q6M73;
 				INFOPLIST_FILE = qtubeapps/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = qtube;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

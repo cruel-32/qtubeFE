@@ -4,14 +4,8 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequ
 import { router } from 'expo-router';
 import { Platform } from 'react-native';
 
-// 플랫폼별 API 주소 설정 (플랫폼별 설정 우선)
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? process.env.EXPO_PUBLIC_PROD_API_URL 
-  : Platform.select({
-      ios: process.env.EXPO_PUBLIC_API_URL_IOS || 'http://localhost:8080/api',
-      android: process.env.EXPO_PUBLIC_API_URL_ANDROID || 'http://10.0.2.2:8080/api',
-      default: process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:8080/api',
-    });
+// 플랫폼별 API 주소 설정 (상용 API 우선)
+const API_BASE_URL = process.env.EXPO_PUBLIC_PROD_API_URL || Platform.OS === 'ios' ? process.env.EXPO_PUBLIC_API_URL_IOS : process.env.EXPO_PUBLIC_API_URL_ANDROID  ;
 
 console.log(`🌐 API Base URL (${Platform.OS}):`, API_BASE_URL);
 
