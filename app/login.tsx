@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Logo from '@/assets/logo.svg';
 import {
+  AppleIcon,
   BeakerIcon,
   ChallengeIcon,
   GoogleIcon,
@@ -25,6 +26,7 @@ import { UserDetails } from '@/modules/User/interfaces/User';
 import {
   AuthService,
   GoogleSignInResult,
+  AppleSignInResult,
 } from '@/modules/User/service/authService';
 import { TokenService } from '@/modules/User/service/tokenService';
 import { useUserStore } from '@/modules/User/store/userStore';
@@ -116,6 +118,42 @@ export default function LoginScreen() {
     }
   };
 
+  const handleAppleLogin = async () => {
+    if (isLoading) return;
+
+    try {
+      setIsLoading(true);
+      const result: AppleSignInResult = await AuthService.signInWithApple();
+      const authResponse = await request<AuthResponse>('/auth/apple', {
+        method: 'POST',
+        data: { 
+          idToken: result.idToken,
+          fullName: result.fullName 
+        },
+      });
+      await TokenService.storeTokens(
+        authResponse.accessToken,
+        authResponse.refreshToken
+      );
+      setUser(authResponse.user);
+      await setupFCMAfterLogin();
+      toastSuccess(
+        `환영합니다, ${authResponse.user.name}님! 로그인에 성공했습니다.`
+      );
+      router.replace('/(tabs)');
+    } catch (error) {
+      console.error('❌ Apple 로그인 실패:', error);
+      toastError(
+        error instanceof Error
+          ? error.message
+          : '알 수 없는 오류가 발생했습니다.',
+        '로그인 실패'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const setupFCMAfterLogin = async (): Promise<void> => {
     try {
       await FCMService.initialize();
@@ -191,6 +229,24 @@ export default function LoginScreen() {
                   isLoading && styles.disabledButtonText,
                 ]}>
                 구글로 시작하기
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.appleButton,
+                { backgroundColor: '#000000' },
+                isLoading && styles.disabledButton,
+              ]}
+              onPress={handleAppleLogin}
+              disabled={isLoading}>
+              <AppleIcon width={24} height={24} color="#FFFFFF" />
+              <Text
+                style={[
+                  styles.appleButtonText,
+                  isLoading && styles.disabledButtonText,
+                ]}>
+                Apple로 시작하기
               </Text>
             </TouchableOpacity>
           </View>
@@ -293,6 +349,25 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginBottom: 24,
+    gap: 12,
+  },
+  appleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    height: 48,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  appleButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 12,
+    color: '#FFFFFF',
   },
   googleButton: {
     flexDirection: 'row',

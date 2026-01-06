@@ -48,7 +48,7 @@ const processQueue = (error: any, token?: string) => {
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     // 인증이 필요 없는 경로 목록
-    const publicPaths = ['/auth/google', '/auth/refresh', '/auth/test-login'];
+    const publicPaths = ['/auth/google', '/auth/apple', '/auth/refresh', '/auth/test-login'];
 
     // 현재 요청 경로가 인증이 필요 없는 경로인지 확인
     if (config.url && publicPaths.includes(config.url)) {
@@ -82,7 +82,7 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     
     // 인증이 필요 없는 경로 목록 (요청 인터셉터와 동일)
-    const publicPaths = ['/auth/google', '/auth/refresh', '/auth/test-login'];
+    const publicPaths = ['/auth/google', '/auth/apple', '/auth/refresh', '/auth/test-login'];
     
     // 401 Unauthorized이고 아직 재시도하지 않았다면 (단, public 경로와 /auth/refresh 요청은 제외)
     if (error.response?.status === 401 && 

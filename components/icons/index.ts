@@ -31,6 +31,7 @@ export { default as EasyIcon } from '@/components/icons/EasyIcon';
 export { default as ExpandIcon } from '@/components/icons/ExpandIcon';
 export { default as FacebookIcon } from '@/components/icons/FacebookIcon';
 export { default as FlagIcon } from '@/components/icons/FlagIcon';
+export { default as AppleIcon } from '@/components/icons/AppleIcon';
 export { default as GoogleIcon } from '@/components/icons/GoogleIcon';
 export { default as HardCheckIcon } from '@/components/icons/HardCheckIcon';
 export { default as HardIcon } from '@/components/icons/HardIcon';

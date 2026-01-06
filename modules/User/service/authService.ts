@@ -1,14 +1,25 @@
 import { firebaseAuth, GOOGLE_WEB_CLIENT_ID } from '@/config/firebase';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import appleAuth, { appleAuthAndroid } from '@invertase/react-native-apple-authentication';
+import { Platform } from 'react-native';
 
-export interface GoogleSignInResult {
+export interface SignInResult {
   idToken: string;
   user: {
     id: string;
     name: string;
     email: string;
     photo?: string;
+  };
+}
+
+export interface GoogleSignInResult extends SignInResult {}
+
+export interface AppleSignInResult extends SignInResult {
+  fullName?: {
+    givenName?: string;
+    familyName?: string;
   };
 }
 
@@ -33,6 +44,93 @@ export class AuthService {
     } catch (error) {
       console.error('Google Sign-In initialization failed:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Apple Sign-In 수행 (iOS/Android 모두 지원)
+   */
+  static async signInWithApple(): Promise<AppleSignInResult> {
+    try {
+      let appleAuthRequestResponse: any;
+      
+      if (Platform.OS === 'ios') {
+        // iOS Apple Sign-In
+        appleAuthRequestResponse = await appleAuth.performRequest({
+          requestedOperation: appleAuth.Operation.LOGIN,
+          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+      } else {
+        // Android Apple Sign-In
+        // Android용 Apple 로그인 구성
+        appleAuthAndroid.configure({
+          // Apple Developer에서 생성한 Service ID
+          clientId: 'com.qtube.qtube.service', // 실제 Service ID로 교체 필요
+          // 리디렉션 URI
+          redirectUri: 'https://qtube-app.firebaseapp.com/__/auth/handler',
+          // 응답 타입
+          responseType: appleAuthAndroid.ResponseType.ALL,
+          // 요청할 스코프
+          scope: appleAuthAndroid.Scope.ALL,
+          // 추가 파라미터
+          additionalScopes: [],
+          // nonce는 보안을 위해 사용
+          nonce: 'nonce',
+          // state는 CSRF 공격을 방지하기 위해 사용
+          state: 'state',
+        });
+
+        // Android에서 Apple 로그인 수행
+        appleAuthRequestResponse = await appleAuthAndroid.signIn();
+      }
+
+      // Apple ID 토큰 확인
+      if (!appleAuthRequestResponse.identityToken) {
+        throw new Error('Apple Sign-In에서 ID 토큰을 받지 못했습니다.');
+      }
+
+      console.log('Apple Sign-In 성공:', appleAuthRequestResponse);
+
+      // Apple 자격 증명 생성
+      const { identityToken, nonce } = appleAuthRequestResponse;
+      const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+
+      // Firebase에 로그인
+      const firebaseUserCredential = await auth().signInWithCredential(appleCredential);
+      const firebaseUser = firebaseUserCredential.user;
+
+      console.log('Firebase 로그인 성공:', firebaseUser.uid);
+
+      // Firebase ID 토큰 획득
+      const firebaseIdToken = await firebaseUser.getIdToken();
+
+      console.log('Firebase ID 토큰 획득 성공');
+
+      // 사용자 이름 처리 (Apple은 이름을 첫 번째 로그인에서만 제공)
+      let displayName = firebaseUser.displayName;
+      if (!displayName && appleAuthRequestResponse.fullName) {
+        const { givenName, familyName } = appleAuthRequestResponse.fullName;
+        if (givenName || familyName) {
+          displayName = `${givenName || ''} ${familyName || ''}`.trim();
+        }
+      }
+
+      return {
+        idToken: firebaseIdToken,
+        user: {
+          id: firebaseUser.uid,
+          name: displayName || 'Apple 사용자',
+          email: firebaseUser.email || '',
+          photo: undefined, // Apple은 프로필 사진을 제공하지 않음
+        },
+        fullName: appleAuthRequestResponse.fullName ? {
+          givenName: appleAuthRequestResponse.fullName.givenName || undefined,
+          familyName: appleAuthRequestResponse.fullName.familyName || undefined,
+        } : undefined,
+      };
+    } catch (error) {
+      console.error('Apple Sign-In 실패:', error);
+      throw new Error('Apple 로그인에 실패했습니다.');
     }
   }
 

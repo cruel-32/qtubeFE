@@ -52,6 +52,8 @@ target 'qtubeapps' do
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
 
+    # Custom Xcode settings (removed __apply_Xcode_settings as it's not defined)
+
     # React Native Firebase - iOS Setup
     if defined?($RNFirebaseAsStaticFramework) && $RNFirebaseAsStaticFramework
       installer.pods_project.targets.each do |target|
@@ -73,16 +75,8 @@ target 'qtubeapps' do
         end
       end
     end
-  end
 
-
-  # ios/Podfile
-  # ...
-
-  post_install do |installer|
-    react_native_post_install(installer)
-    __apply_Xcode_settings(installer.pods_project)
-
+    # Hermes and dSYM configuration
     installer.pods_project.targets.each do |target|
       if target.name == 'hermes-engine'
         target.build_configurations.each do |config|
@@ -95,7 +89,7 @@ target 'qtubeapps' do
         end
       end
       # 앱 타겟의 Release 설정도 DWARF with dSYM File 인지 다시 확인
-      if target.name == 'YOUR_APP_NAME' # YOUR_APP_NAME을 실제 앱 타겟 이름으로 변경
+      if target.name == 'qtubeapps' # 실제 앱 타겟 이름으로 변경
         target.build_configurations.each do |config|
           if config.name == 'Release' || config.name.include?('Release')
             config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'DWARF with dSYM File'
